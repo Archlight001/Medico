@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".UserReg">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvTitle"
+        android:text="Medico New User Reg"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTitle"
+        android:id="@+id/etFirstname"
+        android:hint="FirstName"
+        android:ellipsize="start"
+        android:gravity="center"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etFirstname"
+        android:id="@+id/etLastname"
+        android:hint="LastName"
+        android:ellipsize="start"
+        android:gravity="center"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etLastname"
+        android:id="@+id/etAge"
+        android:hint="Age"
+        android:ellipsize="start"
+        android:digits="0,1,2,3,4,5,6,7,8,9"
+        android:inputType="number"
+        android:maxLength="2"
+        android:gravity="center"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@color/cardview_light_background"
+        android:layout_below="@+id/etAge"
+        android:id="@+id/btnReg"
+        android:text="Register"
+
+        />
+
+
+</RelativeLayout>
