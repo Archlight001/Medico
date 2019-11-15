@@ -9,11 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".UserList"></activity>
         <activity android:name=".UserReg">
             <intent-filter>
-                <action android:name="com.denokela.gmail.RegisterScreen"/>
+                <action android:name="com.denokela.gmail.RegisterScreen" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity

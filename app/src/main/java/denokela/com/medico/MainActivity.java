@@ -34,22 +34,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-        ExecDatabase eDatabase = new ExecDatabase(new ExecDatabase.AsyncRespone() {
-            @Override
-            public void processfinish(List output) {
-                if(output.isEmpty()){
-                    startActivity(new Intent("com.denokela.gmail.RegisterScreen"));
-                    finish();
-                }else{
-                    //nav_name.setText("");
-                }
-
-            }
-        },"readData",getApplicationContext());
-        eDatabase.execute();
-
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
