@@ -9,8 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UserList"></activity>
-        <activity android:name=".UserReg">
+        <activity android:name=".UserList" android:launchMode="singleTop"></activity>
+        <activity android:name=".UserReg"
+            android:parentActivityName=".UserList">
             <intent-filter>
                 <action android:name="com.denokela.gmail.RegisterScreen" />
 

@@ -1,16 +1,28 @@
 package denokela.com.medico;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
 @Dao
 interface UserDao {
     @Insert
-    void insertAll(User... user);
+    void insert(UserEntity userEntity);
 
-    @Query("SELECT * FROM user")
-    List<User> getAllResults();
+    @Update
+    void update(UserEntity userEntity);
+
+    @Delete
+    void delete(UserEntity userEntity);
+
+    @Query("DELETE FROM user_table")
+    void deleteAllUser();
+
+    @Query("SELECT * FROM user_table")
+    LiveData<List<UserEntity>> getAllUsers();
 }

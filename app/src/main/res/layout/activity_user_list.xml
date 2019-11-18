@@ -17,19 +17,22 @@
         android:textColor="#000"
         />
 
-    <ListView
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/header"
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/userListView"
-        />
+        android:id="@+id/recycler_view"
+        android:layout_below="@+id/header"
+        tools:listitem="@layout/view_items"
+        >
+
+
+    </androidx.recyclerview.widget.RecyclerView>
 
     <Button
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/userListView"
+        android:layout_below="@id/recycler_view"
         android:text="Create new Patient"
         android:id="@+id/btnCreateUser"
         />

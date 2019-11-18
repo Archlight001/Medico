@@ -4,11 +4,11 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
-public class User {
-    //Entity Class for the User Database
+@Entity(tableName = "user_table")
+public class UserEntity {
+    //Entity Class for the UserEntity Database
 
-    public User(String firstName, String lastName, String age){
+    public UserEntity(String firstName, String lastName, Integer age){
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
@@ -25,7 +25,7 @@ public class User {
     String lastName;
 
     @ColumnInfo(name = "Age")
-    String age;
+    Integer age;
 
     public int getUserid() {
         return Userid;
@@ -51,11 +51,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 }
