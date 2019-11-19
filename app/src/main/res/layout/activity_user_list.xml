@@ -4,37 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
+    android:padding="20dp"
     tools:context=".UserList">
 
-    <TextView
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SELECT USER"
-        android:textAlignment="textStart"
-        android:textSize="20sp"
-        android:textColor="#000"
-        />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recycler_view"
-        android:layout_below="@+id/header"
-        tools:listitem="@layout/view_items"
-        >
+        tools:listitem="@layout/view_items">
 
 
     </androidx.recyclerview.widget.RecyclerView>
 
     <Button
-        android:layout_marginTop="10dp"
+        android:id="@+id/btnCreateUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/recycler_view"
-        android:text="Create new Patient"
-        android:id="@+id/btnCreateUser"
-        />
+        android:layout_marginTop="10dp"
+        android:text="Create new Patient" />
 
 </RelativeLayout>

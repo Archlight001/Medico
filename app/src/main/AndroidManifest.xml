@@ -9,8 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UserList" android:launchMode="singleTop"></activity>
-        <activity android:name=".UserReg"
+        <activity android:name=".AddPrescription" android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".UserList"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".UserReg"
             android:parentActivityName=".UserList">
             <intent-filter>
                 <action android:name="com.denokela.gmail.RegisterScreen" />
@@ -20,7 +24,9 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

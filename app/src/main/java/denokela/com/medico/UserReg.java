@@ -32,6 +32,9 @@ public class UserReg extends AppCompatActivity implements View.OnClickListener {
 
         regBtn.setOnClickListener(this);
 
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
+        setTitle("Add User");
+
     }
 
     @Override

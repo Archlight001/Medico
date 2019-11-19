@@ -27,7 +27,7 @@ public class UserViewModel extends AndroidViewModel {
         repository.delete(userEntity);
     }
 
-    public void deleteAllNotes(){
+    public void deleteAllUsers(){
         repository.deleteAllUsers();
     }
     public LiveData<List<UserEntity>> getAllUsers(){

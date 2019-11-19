@@ -23,7 +23,6 @@ import java.util.List;
 
 public class UserList extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
-    ListView listView;
     Button btnCreateUser;
 
     public static final int ADD_USER_REQUEST=1;
@@ -47,6 +46,9 @@ public class UserList extends AppCompatActivity implements View.OnClickListener,
         final UserList useractivity = (UserList)this;
 
         btnCreateUser.setOnClickListener(useractivity);
+
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
+        setTitle("Select a User");
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         userViewModel.getAllUsers().observe(this, new Observer<List<UserEntity>>() {

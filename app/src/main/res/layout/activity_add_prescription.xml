@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp"
+    tools:context=".AddPrescription">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <Spinner
+        android:id="@+id/spinner_patname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown" />
+
+    <EditText
+        android:id="@+id/etDrugName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinner_patname"
+        android:layout_marginTop="15dp"
+        android:hint="Drug Name"
+        android:textAlignment="center" />
+
+    <Spinner
+        android:id="@+id/spinner_drugform"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etDrugName"
+        android:layout_marginTop="15dp"
+        android:spinnerMode="dropdown" />
+
+    <TextView
+        android:id="@+id/tv_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinner_drugform"
+        android:layout_marginTop="15dp"
+        android:text="Amount per Dose:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <NumberPicker
+        android:id="@+id/num_picker_drugamount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_amount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp" />
+
+    <TextView
+        android:id="@+id/tv_interval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/num_picker_drugamount"
+        android:layout_marginTop="15dp"
+        android:text="Dose Interval:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <TextView
+        android:id="@+id/tv_after"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_interval"
+        android:layout_marginTop="5dp"
+        android:text="After Every:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+    <NumberPicker
+        android:id="@+id/num_picker_druginterval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_interval"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/tv_afterhours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_interval"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="100dp"
+        android:text="hours"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+
+
+    <TextView
+        android:id="@+id/tv_numberdays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/num_picker_druginterval"
+        android:layout_marginTop="15dp"
+        android:text="Total Number of Days to be Taken:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <NumberPicker
+        android:id="@+id/num_picker_totaldays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_numberdays"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp" />
+
+    </RelativeLayout>
+</ScrollView>
