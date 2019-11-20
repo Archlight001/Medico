@@ -49,7 +49,8 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         protected Void doInBackground(Void... voids) {
             userDao.insert(new UserEntity("UFirstName","Usurname",10)) ;
-            prescriptionDao.insert(new PrescriptionEntity("Stephen","Ampiclox","Tablet",4,2,10,1));
+            prescriptionDao.insert(new PrescriptionEntity(1,"Ampiclox","Tablet",4,2,10,1));
+            prescriptionDao.insert(new PrescriptionEntity(2,"Wrythromycin","Syrup",4,2,10,1));
             return null;
         }
     }

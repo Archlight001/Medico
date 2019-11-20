@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey;
 public class PrescriptionEntity {
 
 
-    public PrescriptionEntity(String patientName, String drugName, String drugForm, int doseInterval, int doseNumber, int numberTaken, int count) {
-        this.patientName = patientName;
+    public PrescriptionEntity(int patientID, String drugName, String drugForm, int doseInterval, int doseNumber, int numberTaken, int count) {
+        this.patientID = patientID;
         this.drugName = drugName;
         this.drugForm = drugForm;
         this.doseInterval = doseInterval;
@@ -21,8 +21,8 @@ public class PrescriptionEntity {
     @PrimaryKey(autoGenerate = true)
     int Prescription_Id;
 
-    @ColumnInfo(name = "PatientName")
-    String patientName;
+    @ColumnInfo(name = "PatientID")
+    int patientID;
 
     @ColumnInfo(name="DrugName")
     String drugName;
@@ -51,12 +51,12 @@ public class PrescriptionEntity {
         Prescription_Id = prescription_Id;
     }
 
-    public String getPatientName() {
-        return patientName;
+    public int getPatientID() {
+        return patientID;
     }
 
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
+    public void setPatientID(int patientID) {
+        this.patientID = patientID;
     }
 
     public String getDrugName() {

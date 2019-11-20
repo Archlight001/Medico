@@ -27,4 +27,7 @@ interface PrescriptionDao {
 
     @Query("SELECT * FROM prescription_table")
     LiveData<List<PrescriptionEntity>> getAllPrescriptions();
+
+    @Query("SELECT * FROM prescription_table WHERE PatientID= :value")
+            LiveData<List<PrescriptionEntity>> getCertainPrescription(int value);
 }

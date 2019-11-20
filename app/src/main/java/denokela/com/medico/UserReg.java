@@ -53,7 +53,6 @@ public class UserReg extends AppCompatActivity implements View.OnClickListener {
         data.putExtra(EXTRA_FNAME,firstName);
         data.putExtra(EXTRA_LNAME,lastName);
         data.putExtra(EXTRA_AGE,ageVal);
-
         setResult(RESULT_OK,data);
         finish();
 

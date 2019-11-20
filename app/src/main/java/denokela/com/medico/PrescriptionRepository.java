@@ -1,6 +1,8 @@
 package denokela.com.medico;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.lifecycle.LiveData;
 
@@ -10,6 +12,7 @@ public class PrescriptionRepository {
 
     private PrescriptionDao prescriptionDao;
     private LiveData<List<PrescriptionEntity>> allPrescriptions;
+    private LiveData<List<PrescriptionEntity>> certainPrescriptions;
 
     public PrescriptionRepository(Application application) {
         AppDatabase appDatabase = AppDatabase.getInstance(application);
@@ -38,6 +41,11 @@ public class PrescriptionRepository {
 
         return allPrescriptions;
     }
+
+    public LiveData<List<PrescriptionEntity>> getPrescriptions(Integer v) {
+        return prescriptionDao.getCertainPrescription(v);
+    }
+
 
     private static class AsyncTasker extends android.os.AsyncTask<PrescriptionEntity,Void,Void>{
         private PrescriptionDao prescriptionDao;

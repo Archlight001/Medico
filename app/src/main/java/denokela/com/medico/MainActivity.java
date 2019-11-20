@@ -9,7 +9,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
@@ -20,12 +22,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     TextView nav_name;
 
+//    SharedPreferences sharedPref= getSharedPreferences("userNo", Context.MODE_PRIVATE);
+//    SharedPreferences.Editor editor = sharedPref.edit();
+
 
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        editor.putInt("CurrentID",1);
+//        editor.apply();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
