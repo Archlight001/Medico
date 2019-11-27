@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".Diagnosis_questions">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Question is here"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        android:layout_centerInParent="true"
+        android:textColor="@color/cardview_light_background"
+        android:id="@+id/tv_questionns"
+        />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_questionns"
+        android:layout_marginTop="10dp"
+        android:id="@+id/rg_answers"
+        >
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/cardview_light_background"
+            android:text="Yes"
+            android:id="@+id/rb_yes"
+            />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/cardview_light_background"
+            android:text="No"
+            android:id="@+id/rb_no"
+            />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/nextBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rg_answers"
+        android:text="Next"
+        android:layout_marginTop="10dp"
+        />
+
+
+
+
+</RelativeLayout>

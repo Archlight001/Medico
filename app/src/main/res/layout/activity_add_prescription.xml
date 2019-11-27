@@ -65,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_interval"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="80dp"
         android:text="After Every:"
         android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
@@ -82,18 +82,38 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_interval"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="80dp"
         android:layout_marginRight="100dp"
         android:text="hours"
         android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/num_picker_druginterval"
+            android:id="@+id/btn_setInitialtime"
+            android:text="SET TIME FOR FIRST DOSE"
+            android:layout_marginTop="8dp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_setInitialtime"
+            android:layout_marginTop="15dp"
+            android:id="@+id/tv_initialtime"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textAlignment="center"
+            android:text="Bla Bla Bla"
+            />
 
 
     <TextView
         android:id="@+id/tv_numberdays"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/num_picker_druginterval"
+        android:layout_below="@id/tv_initialtime"
         android:layout_marginTop="15dp"
         android:text="Total Number of Days to be Taken:"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
@@ -105,6 +125,7 @@
         android:layout_below="@id/tv_numberdays"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp" />
+
 
     </RelativeLayout>
 </ScrollView>

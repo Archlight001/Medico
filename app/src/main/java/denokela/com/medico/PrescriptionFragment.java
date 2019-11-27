@@ -1,9 +1,18 @@
 package denokela.com.medico;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +27,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -41,11 +51,14 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
 
+    public Integer channellerID=0;
+
 
     FloatingActionButton btnaddPrescription;
 
     public static final int ADD_PRESCRIPTION_REQUEST = 2;
     public static final int ADD_USER_REQUEST = 3;
+
 
     @Nullable
     @Override
@@ -176,17 +189,19 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
         if (requestCode == ADD_PRESCRIPTION_REQUEST && resultCode == getActivity().RESULT_OK) {
             String drugname = data.getStringExtra(AddPrescription.EXTRA_DRUG_NAME);
-            String patientname = data.getStringExtra(AddPrescription.EXTRA_PATIENT_NAME);
+            int patientid = data.getIntExtra(AddPrescription.EXTRA_PATIENT_ID,0);
             String drugform = data.getStringExtra(AddPrescription.EXTRA_DRUG_FORM);
             int drugamount = data.getIntExtra(AddPrescription.EXTRA_DRUG_AMOUNT, 0);
             int druginterval = data.getIntExtra(AddPrescription.EXTRA_DRUG_INTERVAL, 0);
             int totaldays = data.getIntExtra(AddPrescription.EXTRA_TOTAL_DAYS, 0);
             int count = data.getIntExtra(AddPrescription.EXTRA_COUNT, 0);
 
-            //  PrescriptionEntity prescription = new PrescriptionEntity(patientname,drugname,drugform,druginterval,drugamount,totaldays,count);
-            //prescriptionViewModel.insert(prescription);
-
+            PrescriptionEntity prescription = new PrescriptionEntity(patientid,drugname,drugform,druginterval,drugamount,totaldays,count);
+            prescriptionViewModel.insert(prescription);
+            getActivity().recreate();
             Toast.makeText(getContext(), "Prescription Added", Toast.LENGTH_SHORT).show();
+
+
         } else if(requestCode == ADD_USER_REQUEST && resultCode == getActivity().RESULT_OK){
             String fname = data.getStringExtra(UserReg.EXTRA_FNAME);
             String lname = data.getStringExtra(UserReg.EXTRA_LNAME);
@@ -211,4 +226,50 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
 
     }
+
 }
+
+//Notification class
+
+//public class NotificationHelper extends ContextWrapper {
+//    public static final String channel1ID = "channel1ID";
+//    public static final String channel1Name = "Channel 1";
+//
+//    private  NotificationManager mManager;
+//    public NotificationHelper(Context base) {
+//
+//        super(base);
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+//            createChannels();
+//        }
+//    }
+//
+//    @TargetApi(Build.VERSION_CODES.O)
+//    public void createChannels() {
+//        NotificationChannel channel1 = new NotificationChannel(channel1ID, channel1Name, NotificationManager.IMPORTANCE_DEFAULT);
+//        channel1.enableLights(true);
+//        channel1.enableVibration(true);
+//        channel1.setLightColor(R.color.colorPrimary);
+//        channel1.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+//
+//        getManager().createNotificationChannel(channel1);
+//
+//    }
+//
+//    public NotificationManager getManager(){
+//        if(mManager == null){
+//            mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        }
+//
+//        return mManager;
+//    }
+//
+//    public NotificationCompat.Builder getChannel1Notification(String title, String message){
+//        return new NotificationCompat.Builder(getApplicationContext(), channel1ID )
+//                .setContentTitle(title)
+//                .setContentText(message)
+//                .setSmallIcon(R.drawable.ic_one);
+//    }
+//
+//}
+

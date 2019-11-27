@@ -46,6 +46,10 @@ public class PrescriptionRepository {
         return prescriptionDao.getCertainPrescription(v);
     }
 
+    public LiveData<List<PrescriptionEntity>> getPrescriptionPatientDrug(Integer patID, String DrugName){
+        return prescriptionDao.getPrescriptionPatientDrug(patID,DrugName);
+    }
+
 
     private static class AsyncTasker extends android.os.AsyncTask<PrescriptionEntity,Void,Void>{
         private PrescriptionDao prescriptionDao;

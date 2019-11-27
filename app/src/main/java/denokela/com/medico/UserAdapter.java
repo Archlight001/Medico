@@ -13,6 +13,7 @@ import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
     private List<UserEntity> users = new ArrayList<>();
+    OnItemClickListener listener;
 
     @NonNull
     @Override
@@ -44,6 +45,24 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
         public UserHolder(@NonNull View itemView) {
             super(itemView);
             textView_name= itemView.findViewById(R.id.tv_name);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   int position = getAdapterPosition();
+                   if(listener !=null && position != RecyclerView.NO_POSITION){
+                       listener.onItemClick(users.get(position));
+                   }
+                }
+            });
         }
+    }
+
+    public interface  OnItemClickListener{
+        void onItemClick(UserEntity userEntity);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener=listener;
     }
 }

@@ -21,7 +21,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserList extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class UserList extends AppCompatActivity implements View.OnClickListener{
 
     Button btnCreateUser;
 
@@ -59,6 +59,14 @@ public class UserList extends AppCompatActivity implements View.OnClickListener,
             }
         });
 
+        adapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(UserEntity userEntity) {
+                Intent intent = new Intent(UserList.this, Diagnosis_questions.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 
@@ -87,8 +95,4 @@ public class UserList extends AppCompatActivity implements View.OnClickListener,
         }
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-    }
 }
