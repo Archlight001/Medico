@@ -32,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/cardview_light_background"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:text="Yes"
             android:id="@+id/rb_yes"
             />
@@ -39,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/cardview_light_background"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:text="No"
             android:id="@+id/rb_no"
             />

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:padding="10dp"
+    tools:context=".Diagnosis_results">
+
+    <TextView
+        android:id="@+id/tv_diagnosis_result_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:text="RESULTS OF DIAGNOSIS"
+        android:textColor="@color/cardview_light_background"
+        android:textAlignment="center"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/disease_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_diagnosis_result_title"
+        tools:listitem="@layout/view_diagnosis_result_items">
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</RelativeLayout>
