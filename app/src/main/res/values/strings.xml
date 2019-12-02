@@ -2,4 +2,6 @@
     <string name="app_name">Medico</string>
     <string name="navigation_drawer_open">Open Drawer</string>
     <string name="navigation_drawer_close">Close Drawer</string>
+    <string name="Google_Maps_API_KEY">AIzaSyBi8webpcyWZOjAJ4v2_36Wh53V7KU8CbQ</string>
+
 </resources>

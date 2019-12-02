@@ -72,6 +72,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_p_reminder:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PrescriptionFragment()).commit();
+                break;
+            case R.id.nav_health_center_finder:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HealthCenterMaps()).commit();
+                break;
         }
 
         drawer.closeDrawer(GravityCompat.START);

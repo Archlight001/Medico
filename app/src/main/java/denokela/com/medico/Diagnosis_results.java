@@ -33,5 +33,12 @@ public class Diagnosis_results extends AppCompatActivity {
         DiseaseAdapter diseaseAdapter = new DiseaseAdapter();
         diseaseAdapter.setDiseases(values);
         recyclerView.setAdapter(diseaseAdapter);
+
+        diseaseAdapter.setOnItemClickListener(new DiseaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Entries entries) {
+                Toast.makeText(Diagnosis_results.this, entries.getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

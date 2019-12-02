@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,6 +28,9 @@ public class UserList extends AppCompatActivity implements View.OnClickListener{
 
     public static final int ADD_USER_REQUEST=1;
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
 
     private UserViewModel userViewModel;
     @Override
@@ -37,6 +41,10 @@ public class UserList extends AppCompatActivity implements View.OnClickListener{
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
+
+        sharedPreferences= getSharedPreferences("userNo", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
 
         final UserAdapter adapter = new UserAdapter();
         recyclerView.setAdapter(adapter);
@@ -62,6 +70,9 @@ public class UserList extends AppCompatActivity implements View.OnClickListener{
         adapter.setOnItemClickListener(new UserAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(UserEntity userEntity) {
+                editor.putInt("CurrentID",userEntity.getUserid());
+                editor.apply();
+
                 Intent intent = new Intent(UserList.this, Diagnosis_questions.class);
                 startActivity(intent);
             }

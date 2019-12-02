@@ -13,6 +13,7 @@ import java.util.List;
 
 public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.DiseaseHolder> {
     private ArrayList<Entries> diseases= new ArrayList<>();
+    OnItemClickListener listener;
 
 
     @NonNull
@@ -45,6 +46,25 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.DiseaseH
             super(itemView);
             tv_diseaseName = itemView.findViewById(R.id.tv_diseaseName);
             tv_percent = itemView.findViewById(R.id.tv_diseasePercent);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if(listener !=null && position != RecyclerView.NO_POSITION){
+                        listener.onItemClick(diseases.get(position));
+                    }
+                }
+            });
         }
+    }
+
+
+    public interface  OnItemClickListener{
+        void onItemClick(Entries entries);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener=listener;
     }
 }
