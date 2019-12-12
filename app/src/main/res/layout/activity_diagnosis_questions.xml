@@ -12,48 +12,38 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Question is here"
+        android:text="Kindly select a minimum of two symptoms from the list below"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textAlignment="center"
         android:layout_marginTop="20dp"
-        android:layout_centerInParent="true"
         android:textColor="@color/cardview_light_background"
-        android:id="@+id/tv_questionns"
+        android:id="@+id/tv_diagnosis_title"
         />
 
-    <RadioGroup
+    <ListView
+        android:id="@+id/listview_symptoms"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_questionns"
-        android:layout_marginTop="10dp"
-        android:id="@+id/rg_answers"
-        >
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/cardview_light_background"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:text="Yes"
-            android:id="@+id/rb_yes"
-            />
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/cardview_light_background"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:text="No"
-            android:id="@+id/rb_no"
-            />
+        android:layout_below="@+id/tv_diagnosis_title"
 
-    </RadioGroup>
+        />
 
-    <Button
+
+
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/nextBtn"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rg_answers"
-        android:text="Next"
-        android:layout_marginTop="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="60dp"
+        android:onClick="showItems"
+        android:src="@drawable/ic_navigate_next"
+        app:backgroundTint="#FFFA52"
         />
 
 

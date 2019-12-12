@@ -37,7 +37,10 @@ public class Diagnosis_results extends AppCompatActivity {
         diseaseAdapter.setOnItemClickListener(new DiseaseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Entries entries) {
-                Toast.makeText(Diagnosis_results.this, entries.getName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Diagnosis_results.this, DiseaseInformation.class);
+                intent.putExtra("Name", entries.getName());
+                startActivity(intent);
+                //Toast.makeText(Diagnosis_results.this, entries.getName(), Toast.LENGTH_SHORT).show();
             }
         });
     }

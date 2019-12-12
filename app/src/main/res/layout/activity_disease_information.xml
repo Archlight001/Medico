@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:padding="15dp"
+    tools:context=".DiseaseInformation">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/tv_diseaseTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DISEASE"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_tagDefinition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_diseaseTitle"
+            android:layout_marginTop="10dp"
+            android:text="DEFINITION"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/cardview_light_background" />
+
+
+        <TextView
+            android:id="@+id/tv_diseaseDefinition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_tagDefinition"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:justificationMode="inter_word"
+            android:text="Definition of disease"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/cardview_light_background" />
+
+        <TextView
+            android:id="@+id/tv_tagSymptoms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_diseaseDefinition"
+            android:layout_marginTop="10dp"
+            android:text="SYMPTOMS"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/cardview_light_background" />
+
+
+        <TextView
+            android:id="@+id/tv_diseaseSymptoms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_tagSymptoms"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:justificationMode="inter_word"
+            android:text="More details about disease"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/cardview_light_background" />
+
+        <TextView
+            android:id="@+id/tv_tagRecommendation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_diseaseSymptoms"
+            android:layout_marginTop="10dp"
+            android:text="RECOMMENDATION"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/cardview_light_background" />
+
+
+        <TextView
+            android:id="@+id/tv_diseaseRecommendation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_tagRecommendation"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:text="Recommendations towards the disease"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/cardview_light_background" />
+
+        <TextView
+            android:id="@+id/tv_tagOtherInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_diseaseRecommendation"
+            android:layout_marginTop="10dp"
+            android:text="OTHER INFO"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/cardview_light_background" />
+
+
+        <TextView
+            android:id="@+id/tv_diseaseOtherInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_tagOtherInfo"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:text="Other Info about the disease"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/cardview_light_background" />
+
+        <Button
+            android:id="@+id/btn_sendtomap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_diseaseOtherInfo"
+            android:layout_marginTop="30dp"
+            android:text="CLICK HERE TO LOCATE NEARBY HEALTH CENTERS IN YOUR AREA"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#000" />
+
+    </RelativeLayout>
+
+
+</ScrollView>

@@ -1,16 +1,21 @@
 package denokela.com.medico;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -18,238 +23,342 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class Diagnosis_questions extends AppCompatActivity{
-    TextView tvquestions;
-    Button nextButton;
-    RadioGroup radioGroup;
-    RadioButton radioButtonYes,radioButtonNo,radBtn;
+    TextView tvdiagnosistitle;
     DQViewModel dqViewModel;
-
-    int questioncounttotal=0;
-    int questioncount=0;
-
-    int countGastro;
-    int countCholera;
-    int countMeningitis;
-    int countTyphoid;
-    int countRenalFailure;
-
-    int totalGastroCount = 6;
-    int totalCholeraCount = 6;
-    int totalMeningitisCount = 5;
-    int totalTyphoidCount = 6;
-    int totalRenalFailureCount = 4;
-
-    int radioButtonValue;
+    DiseaseViewModel diseaseViewModel;
 
     SharedPreferences sharedPreferences;
 
     String disease="";
-    List<DQSimilarEntity> similarquestions;
     List<DQEntity> diagnosisquestions;
+    List<DiseaseSymptomsEntity> gastroSymptoms,choleraSymptoms,typhoidSymptoms,meningitisSymptoms,renalfailureSymptoms;
+
     ArrayList<Entries> entries = new ArrayList<Entries>();
 
+    ArrayList<String> selectedItems = new ArrayList<>();
+    ListView symptomslist;
+
+    List<String> diseaseParameter;
+    List<DQEntity> specificquestions;
+    AlertDialog.Builder builder;
+
+    int totalGastroCount,totalTyphoidCount,totalCholeraCount,totalRenalFailureCount,totalMeningitisCount,GastroCount, TyphoidCount,CholeraCount,RenalFailureCount,MeningitisCount;
+    int count=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diagnosis_questions);
-        tvquestions = findViewById(R.id.tv_questionns);
-        nextButton = findViewById(R.id.nextBtn);
-        radioGroup = findViewById(R.id.rg_answers);
-        radioButtonYes = findViewById(R.id.rb_yes);
-        radioButtonNo = findViewById(R.id.rb_no);
+        tvdiagnosistitle = findViewById(R.id.tv_diagnosis_title);
+        symptomslist = findViewById(R.id.listview_symptoms);
+        symptomslist.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
+        String[] diseases = {"Diarrhea", "Headache", "Abdominal Cramps", "Decreased Appetite", "Nausea", "Vomiting",
+        "Dry Mouth", "Dehydration", "Fever", "Stomach Pain", "Fatigue", "Headache", "Extreme Cold", "Stiff Neck",
+        "Swelling Limbs", "Chest Pain"};
+
+        Collections.shuffle(Arrays.asList(diseases));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.rowlayout,R.id.ctv_symtoms,diseases);
+        symptomslist.setAdapter(adapter);
+        symptomslist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String selectedItem = ((TextView)view).getText().toString();
+                if(selectedItems.contains(selectedItem)){
+                    selectedItems.remove(selectedItem); //Uncheck item
+                }else{
+                    selectedItems.add(selectedItem);
+                }
+            }
+        });
+
 
         sharedPreferences = getSharedPreferences("userNo",MODE_PRIVATE);
 
         dqViewModel = ViewModelProviders.of(this).get(DQViewModel.class);
-        dqViewModel.getAllSimilarQuestions().observe(this, new Observer<List<DQSimilarEntity>>() {
-            @Override
-            public void onChanged(List<DQSimilarEntity> dqSimilarEntities) {
-                similarquestions = new ArrayList<>(dqSimilarEntities);
-                questioncounttotal = similarquestions.size();
+        diseaseViewModel = ViewModelProviders.of(this).get(DiseaseViewModel.class);
 
-                dqViewModel.getAllDiagnosisQuestions().observe(Diagnosis_questions.this, new Observer<List<DQEntity>>() {
+        dqViewModel.getAllDiagnosisQuestions().observe(Diagnosis_questions.this, new Observer<List<DQEntity>>() {
                     @Override
                     public void onChanged(List<DQEntity> dqEntities) {
                         diagnosisquestions = new ArrayList<>(dqEntities);
-                        Collections.shuffle(diagnosisquestions);
-                        questioncounttotal+= diagnosisquestions.size();
-                        showNextQuestion();
-
-
+                        //Collections.shuffle(diagnosisquestions);
                     }
                 });
 
-
+        diseaseViewModel.getGastroSymptoms().observe(Diagnosis_questions.this, new Observer<List<DiseaseSymptomsEntity>>() {
+            @Override
+            public void onChanged(List<DiseaseSymptomsEntity> diseaseSymptomsEntities) {
+                gastroSymptoms = new ArrayList<>(diseaseSymptomsEntities);
             }
         });
 
-
-
-
-
-
-
-
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
+        diseaseViewModel.getCholeraSymptoms().observe(Diagnosis_questions.this, new Observer<List<DiseaseSymptomsEntity>>() {
             @Override
-            public void onClick(View view) {
-                if(radioButtonYes.isChecked() || radioButtonNo.isChecked()){
-                    radioButtonValue = radioGroup.getCheckedRadioButtonId();
-                    radBtn = findViewById(radioButtonValue);
-                    incrementCountDiseases();
-                    showNextQuestion();
-                }else{
-                    Toast.makeText(Diagnosis_questions.this, "Kindly Select an Option", Toast.LENGTH_SHORT).show();
+            public void onChanged(List<DiseaseSymptomsEntity> diseaseSymptomsEntities) {
+                choleraSymptoms = new ArrayList<>(diseaseSymptomsEntities);
+            }
+        });
+
+        diseaseViewModel.getTyphoidSymptoms().observe(Diagnosis_questions.this, new Observer<List<DiseaseSymptomsEntity>>() {
+            @Override
+            public void onChanged(List<DiseaseSymptomsEntity> diseaseSymptomsEntities) {
+                typhoidSymptoms = new ArrayList<>(diseaseSymptomsEntities);
+            }
+        });
+
+        diseaseViewModel.getMeningitisSymptoms().observe(Diagnosis_questions.this, new Observer<List<DiseaseSymptomsEntity>>() {
+            @Override
+            public void onChanged(List<DiseaseSymptomsEntity> diseaseSymptomsEntities) {
+                meningitisSymptoms = new ArrayList<>(diseaseSymptomsEntities);
+            }
+        });
+
+        diseaseViewModel.getRenalFailureSymptoms().observe(Diagnosis_questions.this, new Observer<List<DiseaseSymptomsEntity>>() {
+            @Override
+            public void onChanged(List<DiseaseSymptomsEntity> diseaseSymptomsEntities) {
+                renalfailureSymptoms = new ArrayList<>(diseaseSymptomsEntities);
+            }
+        });
+
+}
+
+    public void showItems(View view) {
+        specificquestions = new ArrayList<>();
+        diseaseParameter = new ArrayList<>();
+
+        GastroCount=0;
+        RenalFailureCount = 0;
+        TyphoidCount = 0;
+        CholeraCount = 0;
+        MeningitisCount = 0;
+
+        totalGastroCount = 0;
+        totalRenalFailureCount = 0;
+        totalTyphoidCount = 0;
+        totalCholeraCount = 0;
+        totalMeningitisCount = 0;
+
+        builder = new AlertDialog.Builder(this);
+
+        if(selectedItems.size() >1){
+            totalGastroCount = gastroSymptoms.size()+2;
+            totalCholeraCount = choleraSymptoms.size()+2;
+            totalTyphoidCount = typhoidSymptoms.size()+2;
+            totalMeningitisCount = meningitisSymptoms.size()+2;
+            totalRenalFailureCount = renalfailureSymptoms.size()+2;
+
+            for(int i =0;i<selectedItems.size();i++) {
+                for (int x = 0; x < gastroSymptoms.size(); x++) {
+                    if (selectedItems.get(i).trim().equals(gastroSymptoms.get(x).getGastroenteritis().trim())) {
+                        GastroCount++;
+                    }
+                }
+                for (int x = 0; x < choleraSymptoms.size(); x++) {
+                    if (selectedItems.get(i).trim().equals(choleraSymptoms.get(x).getCholera().trim())) {
+                        CholeraCount++;
+                    }
+                }
+                for (int x = 0; x < typhoidSymptoms.size(); x++) {
+                    if (selectedItems.get(i).trim().equals(typhoidSymptoms.get(x).getTyphoid().trim())) {
+                        TyphoidCount++;
+                    }
+                }
+                for (int x = 0; x < meningitisSymptoms.size(); x++) {
+                    if (selectedItems.get(i).trim().equals(meningitisSymptoms.get(x).getMeningitis().trim())) {
+                        MeningitisCount++;
+                    }
+                }
+                for (int x = 0; x < renalfailureSymptoms.size(); x++) {
+                    if (selectedItems.get(i).trim().equals(renalfailureSymptoms.get(x).getRenalFailure().trim())) {
+                        RenalFailureCount++;
+                    }
+                }
+            }
+
+                if(selectedItems.size() ==2 || selectedItems.size() ==3 || selectedItems.size() ==4 || selectedItems.size() ==5){
+                    if(GastroCount>=1){
+                        diseaseParameter.add("Gastroenteritis");
+                    }
+                    if(CholeraCount>=1){
+                        diseaseParameter.add("Cholera");
+                    }
+                    if(TyphoidCount>=1){
+                        diseaseParameter.add("Typhoid");
+                    }
+                    if(MeningitisCount>=1){
+                        diseaseParameter.add("Meningitis");
+                    }
+                    if(RenalFailureCount>=1){
+                        diseaseParameter.add("Renal Failure");
+                    }
+                }else if(selectedItems.size() ==6 || selectedItems.size() ==7 || selectedItems.size() ==8 || selectedItems.size() ==9 || selectedItems.size() ==10){
+                    if(GastroCount>=2){
+                        diseaseParameter.add("Gastroenteritis");
+                    }
+                    if(CholeraCount>=2){
+                        diseaseParameter.add("Cholera");
+                    }
+                    if(TyphoidCount>=2){
+                        diseaseParameter.add("Typhoid");
+                    }
+                    if(MeningitisCount>=2){
+                        diseaseParameter.add("Meningitis");
+                    }
+                    if(RenalFailureCount>=2){
+                        diseaseParameter.add("Renal Failure");
+                    }
+                }else if(selectedItems.size() ==11 || selectedItems.size() ==12 || selectedItems.size() ==13 || selectedItems.size() ==14 || selectedItems.size() ==15){
+                    if(GastroCount>=3){
+                        diseaseParameter.add("Gastroenteritis");
+                    }
+                    if(CholeraCount>=3){
+                        diseaseParameter.add("Cholera");
+                    }
+                    if(TyphoidCount>=3){
+                        diseaseParameter.add("Typhoid");
+                    }
+                    if(MeningitisCount>=3){
+                        diseaseParameter.add("Meningitis");
+                    }
+                    if(RenalFailureCount>=3){
+                        diseaseParameter.add("Renal Failure");
+                    }
+                } else if(selectedItems.size() == 16){
+                    if(GastroCount>=4){
+                        diseaseParameter.add("Gastroenteritis");
+                    }
+                    if(CholeraCount>=4){
+                        diseaseParameter.add("Cholera");
+                    }
+                    if(TyphoidCount>=4){
+                        diseaseParameter.add("Typhoid");
+                    }
+                    if(MeningitisCount>=4){
+                        diseaseParameter.add("Meningitis");
+                    }
+                    if(RenalFailureCount>=4){
+                        diseaseParameter.add("Renal Failure");
+                    }
                 }
 
-            }
-        });
+            getdiseasequestion(diseaseParameter);
+            showDialogQuestions(specificquestions);
+        }
+        else{
+            Toast.makeText(this, "Kindly select a minimum of two symptoms", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
+    private void showDialogQuestions(List<DQEntity> specificquestions) {
+        int i=0;
 
-    private void showNextQuestion() {
-        radioGroup.clearCheck();
-        //Toast.makeText(this, String.valueOf(questioncounttotal), Toast.LENGTH_SHORT).show();
+        do{
+            builder.setMessage(specificquestions.get(i).getDQ());
 
-        if(questioncount<questioncounttotal && questioncount < 5){
-           tvquestions.setText(similarquestions.get(questioncount).getSDQ());
-           questioncount++;
-        }else if(questioncount<questioncounttotal && questioncount >= 5){
-            tvquestions.setText(diagnosisquestions.get(questioncount-5).getDQ());
-            disease= diagnosisquestions.get(questioncount-5).getDisease();
-            questioncount++;
-
-             if(questioncounttotal>10 && countGastro==totalGastroCount){
-                countGastro= (int) ((((double)countGastro-0.6) / (double) totalGastroCount) * 100);
-                entries.add(new Entries("Gastroenteritis",countGastro));
-                if(countTyphoid>=3){
-                    countTyphoid = (int) (((double)countTyphoid / (double) totalTyphoidCount) * 100);
-                    entries.add(new Entries("Typhoid", countTyphoid));
-                }else if(countCholera>=3){
-                    countCholera= (int) (((double)countCholera / (double) totalCholeraCount) * 100);
-                    entries.add(new Entries("Cholera", countCholera));
-                }else if(countMeningitis>=3){
-                    countMeningitis = (int) (((double)countMeningitis / (double) totalMeningitisCount) * 100);
-                    entries.add(new Entries("Meningitis",countMeningitis));
-                }else if(countRenalFailure>=3){
-                    countRenalFailure = (int) (((double)countRenalFailure / (double) totalRenalFailureCount) * 100);
-                    entries.add(new Entries("Renal Failure", countRenalFailure));
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    count++;
+                    if(count == specificquestions.size()){
+                        count =0;
+                        transferTotalResult();
+                    }
                 }
-                startIntent();
-            }
-            else if(questioncounttotal>10 && countCholera==totalCholeraCount){
-                countCholera= (int) ((((double)countCholera-0.6) / (double) totalCholeraCount) * 100);
-                entries.add(new Entries("Cholera", countCholera));
-                if(countTyphoid>=3){
-                    countTyphoid = (int) (((double)countTyphoid / (double) totalTyphoidCount) * 100);
-                    entries.add(new Entries("Typhoid", countTyphoid));
-                }else if(countGastro>=3){
-                    countGastro= (int) (((double)countGastro / (double) totalGastroCount) * 100);
-                    entries.add(new Entries("Gastroenteritis", countGastro));
-                }else if(countMeningitis>=3){
-                    countMeningitis = (int) (((double)countMeningitis / (double) totalMeningitisCount) * 100);
-                    entries.add(new Entries("Meningitis",countMeningitis));
-                }else if(countRenalFailure>=3){
-                    countRenalFailure = (int) (((double)countRenalFailure / (double) totalRenalFailureCount) * 100);
-                    entries.add(new Entries("Renal Failure", countRenalFailure));
-                }
-                startIntent();
-            }
-            else if(questioncounttotal>10 && countTyphoid==totalTyphoidCount){
-                countTyphoid = (int) ((((double)countTyphoid-0.6) / (double) totalTyphoidCount) * 100);
-                entries.add(new Entries("Typhoid", countTyphoid));
-                if(countCholera>=3){
-                    countCholera= (int) (((double)countCholera / (double) totalCholeraCount) * 100);
-                    entries.add(new Entries("Cholera", countCholera));
-                }else if(countGastro>=3){
-                    countGastro= (int) (((double)countGastro / (double) totalGastroCount) * 100);
-                    entries.add(new Entries("Gastroenteritis", countGastro));
-                }else if(countMeningitis>=3){
-                    countMeningitis = (int) (((double)countMeningitis / (double) totalMeningitisCount) * 100);
-                    entries.add(new Entries("Meningitis",countMeningitis));
-                }else if(countRenalFailure>=3){
-                    countRenalFailure = (int) (((double)countRenalFailure / (double) totalRenalFailureCount) * 100);
-                    entries.add(new Entries("Renal Failure", countRenalFailure));
-                }
-                startIntent();
-            }
-            else if(questioncounttotal>10 && countMeningitis==totalMeningitisCount){
-                countMeningitis = (int) ((((double)countMeningitis-0.5) / (double) totalMeningitisCount) * 100);
-                entries.add(new Entries("Meningitis",countMeningitis));
+            });
 
-                if(countCholera>=3){
-                    countCholera= (int) (((double)countCholera / (double) totalCholeraCount) * 100);
-                    entries.add(new Entries("Cholera", countCholera));
-                }else if(countGastro>=3){
-                    countGastro= (int) (((double)countGastro / (double) totalGastroCount) * 100);
-                    entries.add(new Entries("Gastroenteritis", countGastro));
-                }else if(countTyphoid>=3){
-                    countTyphoid = (int) (((double)countTyphoid / (double) totalTyphoidCount) * 100);
-                    entries.add(new Entries("Typhoid", countTyphoid));
-                }else if(countRenalFailure>=3){
-                    countRenalFailure = (int) (((double)countRenalFailure / (double) totalRenalFailureCount) * 100);
-                    entries.add(new Entries("Renal Failure", countRenalFailure));
-                }
-                startIntent();
-            }
-            else if(questioncounttotal>10 && countRenalFailure==totalRenalFailureCount){
-                countRenalFailure = (int) ((((double)countRenalFailure-0.4) / (double) totalRenalFailureCount) * 100);
-                entries.add(new Entries("Renal Failure", countRenalFailure));
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
 
-                if(countCholera>=3){
-                    countCholera= (int) (((double)countCholera / (double) totalCholeraCount) * 100);
-                    entries.add(new Entries("Cholera", countCholera));
-                }else if(countGastro>=3){
-                    countGastro= (int) (((double)countGastro / (double) totalGastroCount) * 100);
-                    entries.add(new Entries("Gastroenteritis", countGastro));
-                }else if(countTyphoid>=3){
-                    countTyphoid = (int) (((double)countTyphoid / (double) totalTyphoidCount) * 100);
-                    entries.add(new Entries("Typhoid", countTyphoid));
-                }else if(countMeningitis>=3){
-                    countMeningitis = (int) (((double)countMeningitis / (double) totalMeningitisCount) * 100);
-                    entries.add(new Entries("Meningitis",countMeningitis));
+                    if(specificquestions.get(count).getDisease().equals("Typhoid")){
+                        TyphoidCount++;
+                    }else if(specificquestions.get(count).getDisease().equals("Cholera")){
+                        CholeraCount++;
+                    }else if(specificquestions.get(count).getDisease().equals("Gastroenteritis")){
+                        GastroCount++;
+                    }else if(specificquestions.get(count).getDisease().equals("Renal Failure")){
+                        RenalFailureCount++;
+                    }else if(specificquestions.get(count).getDisease().equals("Meningitis")){
+                        MeningitisCount++;
+                    }
+                    count++;
+                    if(count == specificquestions.size()){
+                        count =0;
+                        transferTotalResult();
+                    }
+
                 }
-                startIntent();
-            }
+            });
+
+            builder.setNeutralButton("Stop", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    transferTotalResult();
+                }
+            });
 
 
+            builder.setCancelable(false);
+            builder.show();
+            i++;
+
+        }while(i<specificquestions.size());
+
+    }
+
+    private void getdiseasequestion(List<String> diseaseParameter) {
+
+        for(int i =0; i<diseaseParameter.size();i++){
+            String value = diseaseParameter.get(i);
+            for(int x=0;x<diagnosisquestions.size();x++){
+                if(value.trim().equals(diagnosisquestions.get(x).getDisease())){
+                    specificquestions.add(new DQEntity(diagnosisquestions.get(x).getDQ(),diagnosisquestions.get(x).getDisease()));
+                }
+            }
         }
 
+        Collections.shuffle(specificquestions);
 
-        else{
+    }
+
+    public void transferTotalResult(){
             //Casting the Values as double to perform arithmetic operation and returning them back to int
-            countGastro= (int) (((double)countGastro / (double) totalGastroCount) * 100);
-            countCholera= (int) (((double)countCholera / (double) totalCholeraCount) * 100);
-            countTyphoid = (int) (((double)countTyphoid / (double) totalTyphoidCount) * 100);
-            countMeningitis = (int) (((double)countMeningitis / (double) totalMeningitisCount) * 100);
-            countRenalFailure = (int) (((double)countRenalFailure / (double) totalRenalFailureCount) * 100);
+            GastroCount= (int) (((double)GastroCount / (double) totalGastroCount) * 100);
+            CholeraCount= (int) (((double)CholeraCount / (double) totalCholeraCount) * 100);
+            TyphoidCount = (int) (((double)TyphoidCount / (double) totalTyphoidCount) * 100);
+            MeningitisCount = (int) (((double)MeningitisCount / (double) totalMeningitisCount) * 100);
+            RenalFailureCount = (int) (((double)RenalFailureCount / (double) totalRenalFailureCount) * 100);
 
-              if(countGastro>30){
-                  entries.add(new Entries("Gastroenteritis",countGastro));
-              }else if(countCholera>30){
-                  entries.add(new Entries("Cholera", countCholera));
-              }else if(countTyphoid>30){
-                  entries.add(new Entries("Typhoid", countTyphoid));
-              } else if(countMeningitis>30){
-                  entries.add(new Entries("Meningitis",countMeningitis));
-              } else if(countRenalFailure>30){
-                  entries.add(new Entries("Renal Failure", countRenalFailure));
+              if(GastroCount>10){
+                  entries.add(new Entries("Gastroenteritis",GastroCount));
+              }
+              if(CholeraCount>10){
+                  entries.add(new Entries("Cholera", CholeraCount));
+              }
+              if(TyphoidCount>10){
+                  entries.add(new Entries("Typhoid", TyphoidCount));
+              }
+              if(MeningitisCount>10){
+                  entries.add(new Entries("Meningitis",MeningitisCount));
+              }
+              if(RenalFailureCount>10){
+                  entries.add(new Entries("Renal Failure", RenalFailureCount));
               }
 
             startIntent();
-        }
 
     }
 
-    private void startIntent() {
+    private void startIntent(){
         Collections.sort(entries, new Comparator<Entries>() {
             @Override
             public int compare(Entries entries, Entries t1) {
@@ -269,38 +378,7 @@ public class Diagnosis_questions extends AppCompatActivity{
         startActivity(intent);
         finish();
     }
-
-
-    private void incrementCountDiseases() {
-        if(questioncount==1 && radBtn.getText().equals("Yes")){
-            countCholera++;
-            countTyphoid++;
-            countMeningitis++;
-        }else if(questioncount==2 && radBtn.getText().equals("Yes")){
-            countCholera++;
-            countGastro++;
-            countMeningitis++;
-        }else if(questioncount==3 && radBtn.getText().equals("Yes")){
-            countGastro++;
-            countTyphoid++;
-        }else if(questioncount==4 && radBtn.getText().equals("Yes")){
-            countCholera++;
-            countGastro++;
-        }else if(questioncount==5 && radBtn.getText().equals("Yes")){
-            countCholera++;
-            countGastro++;
-        }else if(radBtn.getText().equals("Yes") && disease.equals("Gastroenteritis")){
-            countGastro++;
-        }else if(radBtn.getText().equals("Yes") && disease.equals("Cholera")){
-            countCholera++;
-        }else if(radBtn.getText().equals("Yes") && disease.equals("Typhoid")){
-            countTyphoid++;
-        }else if(radBtn.getText().equals("Yes") && disease.equals("Meningitis")){
-            countMeningitis++;
-        }else if(radBtn.getText().equals("Yes") && disease.equals("Renal Failure")){
-            countRenalFailure++;
-        }
-    }
-
-
 }
+
+
+
