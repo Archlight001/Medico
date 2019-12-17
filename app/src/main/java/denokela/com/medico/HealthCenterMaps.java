@@ -61,6 +61,9 @@ public class HealthCenterMaps extends Fragment {
 
     ImageView iv_myLocation;
 
+    String PROXIMITY_RADIUS="10000";
+    double latitude,longitude;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -94,7 +97,7 @@ public class HealthCenterMaps extends Fragment {
                 if(spinnerLocations.getSelectedItem().toString().equals("Select a Health Location")){
                     Toast.makeText(getActivity(), "Select a Health Location", Toast.LENGTH_SHORT).show();
                 }else{
-                    geolocate();
+                   geolocate();
                 }
             }
 
@@ -114,25 +117,74 @@ public class HealthCenterMaps extends Fragment {
 
     }
 
+
+
     private void geolocate(){
         Log.d(TAG, "geolocate: geolocating");
         String searchString = spinnerLocations.getSelectedItem().toString();
         Geocoder geocoder = new Geocoder(getActivity());
         List<Address> list = new ArrayList<>();
-        try{
-            list = geocoder.getFromLocationName("Abuja",1);
-        }catch(IOException e){
-            Log.e(TAG, "geolocate: IOException: " + e.getMessage());
-        }
+//        try{
+//            list = geocoder.getFromLocationName("Abuja",1);
+//        }catch(IOException e){
+//            Log.e(TAG, "geolocate: IOException: " + e.getMessage());
+//        }
+//
+//        if(list.size()>0){
+//            Address address = list.get(0);
+//            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()),DEFAULT_ZOOM,address.getAddressLine(0));
+//
+//            Log.d(TAG, "geolocate: "+address.toString());
+//        }else{
+//            Toast.makeText(getActivity(),"No location found", Toast.LENGTH_SHORT).show();
+//        }
 
-        if(list.size()>0){
-            Address address = list.get(0);
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()),DEFAULT_ZOOM,address.getAddressLine(0));
+        Object dataTransfer[] = new Object[2];
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData(getContext());
 
-            Log.d(TAG, "geolocate: "+address.toString());
-        }else{
-            Toast.makeText(getActivity(),"No location found", Toast.LENGTH_SHORT).show();
+        switch (searchString.trim()){
+            case "Hospitals":
+               mMap.clear();
+               String Hospital = "hospital";
+               String keyword = "hospital";
+               String url = getUrl(latitude,longitude,Hospital,keyword);
+
+               dataTransfer[0]=mMap;
+               dataTransfer[1]=url;
+
+               getNearbyPlacesData.execute(dataTransfer);
+
+                Toast.makeText(getActivity(), "Showing Nearby Hospitals", Toast.LENGTH_LONG).show();
+                break;
+            case "Clinics":
+                mMap.clear();
+
+                url = getUrl(latitude,longitude,"hospital","UDUS clinic");
+                dataTransfer[0]=mMap;
+                dataTransfer[1]=url;
+
+                getNearbyPlacesData.execute(dataTransfer);
+
+                Toast.makeText(getActivity(), "Showing Nearby Clinics", Toast.LENGTH_LONG).show();
+                break;
+            case "Pharmacies":
+                mMap.clear();
+                String Pharmacies = "pharmacy";
+                url = getUrl(latitude,longitude,"pharmacy","pharmacy");
+                dataTransfer[0]=mMap;
+                dataTransfer[1]=url;
+
+                getNearbyPlacesData.execute(dataTransfer);
+
+                Toast.makeText(getActivity(), "Showing Nearby Pharmacies", Toast.LENGTH_LONG).show();
+                break;
         }
+    }
+
+    private String getUrl(double latitude, double longitude,String nearbyPlace,String keyword){
+        String googlePlaceUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+latitude+","+longitude+"&radius=10000&type="+nearbyPlace+"&keyword="+keyword+"&key=AIzaSyD3TzlzxMaX96FC5kB8etS6Uf4h9u8QkQI";
+        Log.d(TAG, "getUrl: "+ googlePlaceUrl);
+        return googlePlaceUrl;
     }
 
 
@@ -240,7 +292,8 @@ public class HealthCenterMaps extends Fragment {
                         if(task.isSuccessful()){
                             Log.d(TAG, "onComplete: Found Location");
                             Location currentLocation = (Location) task.getResult();
-
+                            latitude = currentLocation.getLatitude();
+                            longitude = currentLocation.getLongitude();
                             moveCamera(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),DEFAULT_ZOOM, "My Location");
 
                         }else{
