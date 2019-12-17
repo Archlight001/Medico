@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
     android:padding="15dp"
-    tools:context=".DiseaseInformation">
+    tools:context=".activities.DiseaseInformation">
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
     android:padding="10dp"
-    tools:context=".Diagnosis_results">
+    tools:context=".activities.Diagnosis_results">
 
     <TextView
         android:id="@+id/tv_diagnosis_result_title"

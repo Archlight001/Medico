@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     android:background="@color/colorPrimaryDark"
-    tools:context=".Diagnosis_questions">
+    tools:context=".activities.Diagnosis_questions">
 
 
     <TextView

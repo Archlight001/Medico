@@ -9,6 +9,17 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import denokela.com.medico.dao.DQDao;
+import denokela.com.medico.dao.DiseaseDao;
+import denokela.com.medico.dao.DiseaseSymptomsDao;
+import denokela.com.medico.dao.PrescriptionDao;
+import denokela.com.medico.dao.UserDao;
+import denokela.com.medico.entities.DQEntity;
+import denokela.com.medico.entities.DiseaseEntity;
+import denokela.com.medico.entities.DiseaseSymptomsEntity;
+import denokela.com.medico.entities.PrescriptionEntity;
+import denokela.com.medico.entities.UserEntity;
+
 @Database(entities = {UserEntity.class, PrescriptionEntity.class,
         DQEntity.class, DiseaseEntity.class,DiseaseSymptomsEntity.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {

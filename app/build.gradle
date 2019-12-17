@@ -47,5 +47,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-nearby:17.0.0'
 
 
+//    //Google Directions
+//    implementation 'com.google.maps:google-maps-services:(0.10.2)'
+//    implementation 'org.slf4j:slf4j-simple:1.7.25'
+
+
 
 }
