@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.DoctorLocationMap">
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/map"
+        android:id="@+id/doctorAddressmap"
         tools:context=".MapsActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
-    
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -31,17 +35,18 @@
             android:src="@drawable/ic_search"
             />
 
-        <Spinner
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toLeftOf="@id/img_search_btn"
             android:layout_centerVertical="true"
-            android:id="@+id/spinner_location_parameters"
+            android:id="@+id/editText_address"
             android:background="@null"
+            android:imeOptions="actionSearch"
             />
-        
+
     </RelativeLayout>
-    
+
     <ImageView
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -50,18 +55,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="10dp"
         android:src="@drawable/ic_gps_fixed_black_24dp"
-        android:id="@+id/image_view_btn_myLocation"
-        />
-
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_below="@id/image_view_btn_myLocation"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
-        android:src="@drawable/doctor"
-        android:id="@+id/image_doctor"
+        android:id="@+id/dlm_image_view_mylocation"
         />
 
 </RelativeLayout>

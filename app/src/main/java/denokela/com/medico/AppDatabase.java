@@ -12,16 +12,18 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import denokela.com.medico.dao.DQDao;
 import denokela.com.medico.dao.DiseaseDao;
 import denokela.com.medico.dao.DiseaseSymptomsDao;
+import denokela.com.medico.dao.DoctorsDao;
 import denokela.com.medico.dao.PrescriptionDao;
 import denokela.com.medico.dao.UserDao;
 import denokela.com.medico.entities.DQEntity;
 import denokela.com.medico.entities.DiseaseEntity;
 import denokela.com.medico.entities.DiseaseSymptomsEntity;
+import denokela.com.medico.entities.DoctorsEntity;
 import denokela.com.medico.entities.PrescriptionEntity;
 import denokela.com.medico.entities.UserEntity;
 
 @Database(entities = {UserEntity.class, PrescriptionEntity.class,
-        DQEntity.class, DiseaseEntity.class,DiseaseSymptomsEntity.class}, version = 1)
+        DQEntity.class, DiseaseEntity.class,DiseaseSymptomsEntity.class, DoctorsEntity.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
 
@@ -35,6 +37,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract DiseaseDao diseaseDao();
 
     public abstract DiseaseSymptomsDao diseaseSymptomsDao();
+
+    public abstract DoctorsDao doctorsDao();
 
 
     //synchronized means at least one thread at a time can access the database
@@ -64,6 +68,7 @@ public abstract class AppDatabase extends RoomDatabase {
         private DQDao dqDao;
         private DiseaseDao diseaseDao;
         private DiseaseSymptomsDao diseaseSymptomsDao;
+        private DoctorsDao doctorsDao;
 
         private PopulateDbAsynctask(AppDatabase db) {
             userDao = db.userDao();
@@ -71,6 +76,7 @@ public abstract class AppDatabase extends RoomDatabase {
             dqDao = db.dqDao();
             diseaseDao = db.diseaseDao();
             diseaseSymptomsDao=db.diseaseSymptomsDao();
+            doctorsDao = db.doctorsDao();
         }
 
         @Override
@@ -132,7 +138,7 @@ public abstract class AppDatabase extends RoomDatabase {
             diseaseDao.insert(new DiseaseEntity("RENAL FAILURE"
                     , "Kidney failure occurs when your kidneys lose the ability to sufficiently filter waste from your blood."
                     , "Reduced amount of urine, swelling of your legs, ankles and feet, shortness of breath, fatigue, nausea, pain or pressures in the chest, seizures, coma."
-                    , "Limit your intake of sodium, potassium and phosphorus if you’re experiencing any of the symptoms. And also look to visit any health center for a test on Urinalysis, " +
+                    , "Limit your intake of sodium, potassium and phosphorus if you’re experiencing any of the symptoms. And also look to visit any health c    enter for a test on Urinalysis, " +
                     "Blood samples, Kidney tissue samples or Imaging for a more efficient and accurate diagnosis"
                     , "An important information is to note that Diabetes is the most common cause of kidney failure. Uncontrolled high blood sugar can damage kidneys. The damage can become worse over time. "));
 
@@ -145,7 +151,11 @@ public abstract class AppDatabase extends RoomDatabase {
             diseaseSymptomsDao.insert(new DiseaseSymptomsEntity("Dry Mouth","","Nausea","",""));
             diseaseSymptomsDao.insert(new DiseaseSymptomsEntity("Dehydration","","Vomiting","",""));
 
-
+            doctorsDao.insert(new DoctorsEntity("Dr. Abiola Godwin","Mabera","abiolaGodwin@gmail.com","07064411985","Gastroenteritis Cholera"));
+            doctorsDao.insert(new DoctorsEntity("Dr. Elias David","Old Airport","eliasdavid242@gmail.com","08043219876","Cholera"));
+            doctorsDao.insert(new DoctorsEntity("Dr Joseph Pada","Fodio Road","padajo@yahoo.com","08038378080","Typhoid Meningitis"));
+            doctorsDao.insert(new DoctorsEntity("Dr Rachel Bawa","Goronyo Road","bawarachel@gmail.com","09054637219","Meningitis"));
+            doctorsDao.insert(new DoctorsEntity("Dr Barak Obama","Offa Road","barakK@gmail.com","07064411984","Renal Failure"));
 
             return null;
         }

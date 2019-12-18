@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/layout_doctorslist"
+    android:background="@color/colorPrimaryDark"
+    android:padding="10dp"
+    tools:context=".activities.DoctorsList">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_showingDoctors"
+        android:textColor="@color/cardview_light_background"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_showingDoctors"
+        android:layout_marginTop="5dp"
+        android:id="@+id/recycler_view_doctors"
+        tools:listitem="@layout/view_doctors"
+        />
+
+</RelativeLayout>

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -41,6 +42,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.DirectionsApiRequest;
+import com.google.maps.GeoApiContext;
+import com.google.maps.PendingResult;
+import com.google.maps.model.DirectionsResult;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +55,9 @@ import java.util.List;
 import denokela.com.medico.DataParser;
 import denokela.com.medico.GetNearbyPlacesData;
 import denokela.com.medico.R;
+import denokela.com.medico.activities.DoctorsList;
+import denokela.com.medico.activities.MainActivity;
+import denokela.com.medico.activities.UserReg;
 
 public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindowClickListener, GetNearbyPlacesData.AsyncResponse {
 
@@ -69,9 +77,9 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
 
     Spinner spinnerLocations;
 
-    ImageView iv_myLocation;
+    ImageView iv_myLocation,iv_doctor;
 
-    String PROXIMITY_RADIUS="10000";
+    GeoApiContext mGeoApiContext = null;
     double latitude,longitude;
 
     @Nullable
@@ -85,6 +93,7 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
         super.onViewCreated(view, savedInstanceState);
         spinnerLocations = view.findViewById(R.id.spinner_location_parameters);
         iv_myLocation = view.findViewById(R.id.image_view_btn_myLocation);
+        iv_doctor = view.findViewById(R.id.image_doctor);
 
         String [] locations = {"Select a Health Location","Hospitals","Clinics","Pharmacies"};
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,locations);
@@ -94,12 +103,19 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
             getLocationPermission();
         }
 
+
+
     }
 
 
     private void init(){
         Log.d(TAG, "init: initializing");
+        if(mGeoApiContext == null){
+            mGeoApiContext = new GeoApiContext.Builder()
+                    .apiKey(getString(R.string.Google_Directions_Key))
+                    .build();
 
+        }
         spinnerLocations.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -107,7 +123,7 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
                 if(spinnerLocations.getSelectedItem().toString().equals("Select a Health Location")){
                     Toast.makeText(getActivity(), "Select a Health Location", Toast.LENGTH_SHORT).show();
                 }else{
-                   geolocate();
+                    geolocate();
                 }
             }
 
@@ -122,6 +138,46 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
             @Override
             public void onClick(View view) {
                 getDeviceLocation();
+            }
+        });
+
+        iv_doctor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Select a Disease");
+                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.select_dialog_singlechoice);
+                    arrayAdapter.add("Gastroenteritis");
+                    arrayAdapter.add("Cholera");
+                    arrayAdapter.add("Typhoid");
+                    arrayAdapter.add("Meningitis");
+                    arrayAdapter.add("Renal Failure");
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String strname = arrayAdapter.getItem(i);
+                        AlertDialog.Builder builderinner = new AlertDialog.Builder(getContext());
+                        builderinner.setTitle("Disease Selected is: ");
+                        builderinner.setMessage(strname);
+                        builderinner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(getActivity(), DoctorsList.class);
+                                intent.putExtra("DiseaseName",strname);
+                                startActivity(intent);
+                            }
+                        });
+                        builderinner.show();
+                    }
+                });
+                builder.show();
             }
         });
 
@@ -192,7 +248,7 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
     }
 
     private String getUrl(double latitude, double longitude,String nearbyPlace,String keyword){
-        String googlePlaceUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+latitude+","+longitude+"&radius=10000&type="+nearbyPlace+"&keyword="+keyword+"&key=AIzaSyD3TzlzxMaX96FC5kB8etS6Uf4h9u8QkQI";
+        String googlePlaceUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+latitude+","+longitude+"&radius=10000&type="+nearbyPlace+"&keyword="+keyword+"&key="+getString(R.string.Google_Places_Key);
         Log.d(TAG, "getUrl: "+ googlePlaceUrl);
         return googlePlaceUrl;
     }
@@ -323,16 +379,6 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
         Log.d(TAG, "moveCamera: Moving the Camera to: lat: "+ latLng.latitude + " , lng: "+ latLng.longitude );
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
 
-
-//        if(!title.equals("My Location")){
-//            //Moving the map and placing a marker object on the selected location
-//            MarkerOptions options = new MarkerOptions()
-//                    .position(latLng)
-//                    .title(title);
-//            mMap.addMarker(options);
-//
-//        }
-
     }
 
     @Override
@@ -340,8 +386,10 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(marker.getSnippet())
                 .setCancelable(true)
+                .setMessage("Do you want to see the route to this location")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        calculateDirections(marker);
                         dialog.dismiss();
                     }
                 })
@@ -392,5 +440,40 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
             mMap.setOnInfoWindowClickListener(this);
         }
 
+    }
+
+
+    private void calculateDirections(Marker marker){
+        Log.d(TAG, "calculateDirections: calculating directions.");
+
+        com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
+                marker.getPosition().latitude,
+                marker.getPosition().longitude
+        );
+        DirectionsApiRequest directions = new DirectionsApiRequest(mGeoApiContext);
+
+        directions.alternatives(true);
+        directions.origin(
+                new com.google.maps.model.LatLng(
+                        latitude,
+                        longitude
+                )
+        );
+        Log.d(TAG, "calculateDirections: destination: " + destination.toString());
+        directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
+            @Override
+            public void onResult(DirectionsResult result) {
+                Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
+                Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration);
+                Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance);
+                Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+                Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage() );
+
+            }
+        });
     }
 }
