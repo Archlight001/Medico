@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -55,7 +56,6 @@ public class DoctorLocationMap extends AppCompatActivity {
 
     AutoCompleteTextView location_Text_Address;
     ImageView imageView_mylocation;
-
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     public static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
@@ -69,11 +69,17 @@ public class DoctorLocationMap extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationProviderClient;
     GeoApiContext mGeoApiContext = null;
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
     private static final String TAG = "DoctorLocationMap";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doctor_location_map);
+
+        sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
         location_Text_Address = findViewById(R.id.location_address);
         imageView_mylocation = findViewById(R.id.dlm_image_view_mylocation);
@@ -82,23 +88,6 @@ public class DoctorLocationMap extends AppCompatActivity {
             getLocationPermission();
         }
 
-        String address = getIntent().getStringExtra("Address");
-        location_Text_Address.setAdapter(new PlaceAutoSuggestAdapter(DoctorLocationMap.this,
-                android.R.layout.simple_list_item_1));
-        location_Text_Address.setText(address);
-        location_Text_Address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                geolocate();
-            }
-        });
-        location_Text_Address.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recreate();
-            }
-        });
-        location_Text_Address.setInputType(0);//Make the Textview uneditable
 
     }
 
@@ -200,8 +189,8 @@ public class DoctorLocationMap extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try{
             if(LocationPermissionGranted){
-                Task location = fusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
+                final Task[] location = {fusedLocationProviderClient.getLastLocation()};
+                location[0].addOnCompleteListener(new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()){
@@ -209,6 +198,8 @@ public class DoctorLocationMap extends AppCompatActivity {
                             Location currentLocation = (Location) task.getResult();
                             latitude = currentLocation.getLatitude();
                             longitude = currentLocation.getLongitude();
+                            editor.putString("userLocation",latitude+","+longitude);
+                            editor.apply();
                             moveCamera(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),DEFAULT_ZOOM, "My Location");
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
@@ -249,6 +240,10 @@ public class DoctorLocationMap extends AppCompatActivity {
 
         }
 
+        String address = getIntent().getStringExtra("Address");
+        location_Text_Address.setAdapter(new PlaceAutoSuggestAdapter(DoctorLocationMap.this,
+                android.R.layout.simple_list_item_1));
+        location_Text_Address.setText(address);
 
         location_Text_Address.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -265,16 +260,20 @@ public class DoctorLocationMap extends AppCompatActivity {
             }
         });
 
-//        location_Text_Address.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-//                if((keyEvent.getAction() ==KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)){
-//                    geolocate();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
+        location_Text_Address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                geolocate();
+            }
+        });
+        location_Text_Address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recreate();
+            }
+        });
+        location_Text_Address.setInputType(0);//Make the Textview uneditable
+
         imageView_mylocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

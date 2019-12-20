@@ -8,6 +8,9 @@ import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+
 import java.util.ArrayList;
 
 import denokela.com.medico.PlaceApiAutoComplete;
@@ -18,6 +21,7 @@ public class PlaceAutoSuggestAdapter extends ArrayAdapter implements Filterable 
     Context context;
 
     ArrayList<String> results;
+    String location;
 
     PlaceApiAutoComplete placeApiAutoComplete = new PlaceApiAutoComplete();
 
@@ -25,7 +29,7 @@ public class PlaceAutoSuggestAdapter extends ArrayAdapter implements Filterable 
         super(context, resource);
         this.context=context;
         this.resource = resource;
-    }
+   }
 
     @Override
     public int getCount(){
@@ -45,8 +49,8 @@ public class PlaceAutoSuggestAdapter extends ArrayAdapter implements Filterable 
             protected FilterResults performFiltering(CharSequence charSequence) {
                 FilterResults filterResults = new FilterResults();
                 if(charSequence!=null){
-                    Log.d(TAG, "performFiltering: Filtering results");
-                    results = placeApiAutoComplete.autoComplete(charSequence.toString());
+                  Log.d(TAG, "performFiltering: Filtering results");
+                    results = placeApiAutoComplete.autoComplete(context,charSequence.toString());
                     Log.d(TAG, "performFiltering: "+results.size());
                     filterResults.values = results;
                     filterResults.count = results.size();

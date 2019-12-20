@@ -68,7 +68,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        sharedPref = getActivity().getSharedPreferences("userNo", getActivity().MODE_PRIVATE);
+        sharedPref = getActivity().getSharedPreferences("user", getActivity().MODE_PRIVATE);
         editor = sharedPref.edit();
 
         tvInstruction = view.findViewById(R.id.tv_instruction);
