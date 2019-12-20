@@ -124,6 +124,19 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="#000" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btn_sendtomap"
+            android:text="Click the doctor menu icon to get information of doctors that specializes in this disease"
+            android:textColor="@color/cardview_light_background"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textStyle="italic"
+            android:textAlignment="center"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            />
+
     </RelativeLayout>
 
 

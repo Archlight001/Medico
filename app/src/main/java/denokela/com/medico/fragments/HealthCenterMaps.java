@@ -379,6 +379,12 @@ public class HealthCenterMaps extends Fragment implements GoogleMap.OnInfoWindow
         Log.d(TAG, "moveCamera: Moving the Camera to: lat: "+ latLng.latitude + " , lng: "+ latLng.longitude );
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
 
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title(title);
+
+        mMap.addMarker(options);
+
     }
 
     @Override

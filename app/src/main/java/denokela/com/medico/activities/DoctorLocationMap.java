@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,9 +19,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,6 +39,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.maps.GeoApiContext;
@@ -44,10 +49,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import denokela.com.medico.R;
+import denokela.com.medico.adapter.PlaceAutoSuggestAdapter;
 
 public class DoctorLocationMap extends AppCompatActivity {
 
-    EditText editText_Address;
+    AutoCompleteTextView location_Text_Address;
     ImageView imageView_mylocation;
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -69,7 +75,7 @@ public class DoctorLocationMap extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doctor_location_map);
 
-        editText_Address = findViewById(R.id.editText_address);
+        location_Text_Address = findViewById(R.id.location_address);
         imageView_mylocation = findViewById(R.id.dlm_image_view_mylocation);
 
         if (isServicesOk()) {
@@ -77,7 +83,22 @@ public class DoctorLocationMap extends AppCompatActivity {
         }
 
         String address = getIntent().getStringExtra("Address");
-        editText_Address.setText(address);
+        location_Text_Address.setAdapter(new PlaceAutoSuggestAdapter(DoctorLocationMap.this,
+                android.R.layout.simple_list_item_1));
+        location_Text_Address.setText(address);
+        location_Text_Address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                geolocate();
+            }
+        });
+        location_Text_Address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recreate();
+            }
+        });
+        location_Text_Address.setInputType(0);//Make the Textview uneditable
 
     }
 
@@ -206,6 +227,17 @@ public class DoctorLocationMap extends AppCompatActivity {
         Log.d(TAG, "moveCamera: Moving the Camera to: lat: "+ latLng.latitude + " , lng: "+ latLng.longitude );
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
 
+        if(!title.equals("My Location")){
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title(title);
+
+            mMap.addMarker(options);
+        }
+
+        hideSoftKeyboard();
+
+
     }
 
     private void init(){
@@ -217,19 +249,32 @@ public class DoctorLocationMap extends AppCompatActivity {
 
         }
 
-        geolocate();
-        editText_Address.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+        location_Text_Address.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionid, KeyEvent keyEvent) {
                 if(actionid == EditorInfo.IME_ACTION_SEARCH || actionid == EditorInfo.IME_ACTION_DONE ||
                 keyEvent.getAction() == KeyEvent.ACTION_DOWN || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
-
+                    InputMethodManager imm = (InputMethodManager) getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(location_Text_Address.getApplicationWindowToken(), 0);
                     //Execute Method for searching
                     geolocate();
                 }
                 return false;
             }
         });
+
+//        location_Text_Address.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+//                if((keyEvent.getAction() ==KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)){
+//                    geolocate();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
         imageView_mylocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,17 +282,19 @@ public class DoctorLocationMap extends AppCompatActivity {
             }
         });
 
+        hideSoftKeyboard();
+
 
     }
 
 
     private void geolocate() {
         Log.d(TAG, "geolocate: geolocating");
-        String searchString = editText_Address.getText().toString();
+        String searchString = location_Text_Address.getText().toString().trim();
         Geocoder geocoder = new Geocoder(this);
         List<Address> list = new ArrayList<>();
         try{
-            list = geocoder.getFromLocationName("Abuja",1);
+            list = geocoder.getFromLocationName(searchString,1);
         }catch(IOException e){
             Log.e(TAG, "geolocate: IOException: " + e.getMessage());
         }
@@ -261,4 +308,9 @@ public class DoctorLocationMap extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"No location found", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void hideSoftKeyboard(){
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
 }
