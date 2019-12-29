@@ -5,8 +5,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -127,41 +129,58 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
         int totaldays = npTotaldays.getValue();
         int count =(totaldays*(24/druginterval));
 
+        String patientName =spinPatName.getSelectedItem().toString();
+
         if(drugname.trim().length()==0) {
             Toast.makeText(this, "Kindly enter a drug name", Toast.LENGTH_SHORT).show();
         }else if(hour==0 || minute ==0){
             Toast.makeText(this, "Kindly enter a time for the first dose", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Asynctask asynctask = new Asynctask(new Asynctask.AsyncResponse() {
+        }else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You're about to add a new Prescription for "+patientName);
+            builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
                 @Override
-                public void processfinish(List<PrescriptionEntity> output) {
-                    if(output.size()==0){
-                        Intent data = new Intent();
-                        data.putExtra(EXTRA_PATIENT_ID, patientID);
-                        data.putExtra(EXTRA_DRUG_NAME, drugname);
-                        data.putExtra(EXTRA_DRUG_FORM, drugform);
-                        data.putExtra(EXTRA_DRUG_INTERVAL, druginterval);
-                        data.putExtra(EXTRA_DRUG_AMOUNT, drugamount);
-                        data.putExtra(EXTRA_TOTAL_DAYS, totaldays);
-                        data.putExtra(EXTRA_COUNT, count);
-                        data.putExtra(ALARM_HOUR, hour);
-                        data.putExtra(ALARM_MINUTE, minute);
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Asynctask asynctask = new Asynctask(new Asynctask.AsyncResponse() {
+                        @Override
+                        public void processfinish(List<PrescriptionEntity> output) {
+                            if(output.size()==0){
+                                dialogInterface.dismiss();
+                                Intent data = new Intent();
+                                data.putExtra(EXTRA_PATIENT_ID, patientID);
+                                data.putExtra(EXTRA_DRUG_NAME, drugname);
+                                data.putExtra(EXTRA_DRUG_FORM, drugform);
+                                data.putExtra(EXTRA_DRUG_INTERVAL, druginterval);
+                                data.putExtra(EXTRA_DRUG_AMOUNT, drugamount);
+                                data.putExtra(EXTRA_TOTAL_DAYS, totaldays);
+                                data.putExtra(EXTRA_COUNT, count);
+                                data.putExtra(ALARM_HOUR, hour);
+                                data.putExtra(ALARM_MINUTE, minute);
 
-                        Log.d(TAG, "onChanged: Adding preescription");
-                        setResult(RESULT_OK, data);
+                                Log.d(TAG, "onChanged: Adding preescription");
+                                setResult(RESULT_OK, data);
 
-                        Toast.makeText(AddPrescription.this, "Adding Prescription", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Prescription Already Exists for this Patient and Drug", Toast.LENGTH_LONG).show();
-                    }
+                                Toast.makeText(AddPrescription.this, "Adding Prescription", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }else{
+                                Toast.makeText(getApplicationContext(), "Prescription Already Exists for this Patient and Drug", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    },getApplicationContext(),patientID,drugname);
+                    asynctask.execute();
+
                 }
-            },getApplicationContext(),patientID,drugname);
-            asynctask.execute();
+            });
+            builder.setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            builder.show();
+
+
         }
-
-
 
     }
 

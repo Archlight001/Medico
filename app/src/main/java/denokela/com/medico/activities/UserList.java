@@ -30,6 +30,7 @@ public class UserList extends AppCompatActivity implements View.OnClickListener{
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    Integer totalusers=0;
 
 
     private UserViewModel userViewModel;
@@ -42,7 +43,7 @@ public class UserList extends AppCompatActivity implements View.OnClickListener{
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        sharedPreferences= getSharedPreferences("userNo", MODE_PRIVATE);
+        sharedPreferences= getSharedPreferences("user", MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
 
@@ -64,6 +65,7 @@ public class UserList extends AppCompatActivity implements View.OnClickListener{
             public void onChanged(List<UserEntity> userEntities) {
                 //update Recycler View
                 adapter.setUsers(userEntities);
+                totalusers=userEntities.size();
             }
         });
 
@@ -71,6 +73,7 @@ public class UserList extends AppCompatActivity implements View.OnClickListener{
             @Override
             public void onItemClick(UserEntity userEntity) {
                 editor.putInt("CurrentID",userEntity.getUserid());
+                editor.putString("CurrentName",userEntity.getFirstName() + " "+userEntity.getLastName());
                 editor.apply();
 
                 Intent intent = new Intent(UserList.this, Diagnosis_questions.class);
@@ -99,6 +102,13 @@ public class UserList extends AppCompatActivity implements View.OnClickListener{
 
             UserEntity user = new UserEntity(fname,lname,age);
             userViewModel.insert(user);
+
+            if(totalusers==0){
+                editor.putString("CurrentName",fname + " "+lname);
+                editor.apply();
+            }
+
+            recreate();
 
             Toast.makeText(this, "New User Created", Toast.LENGTH_SHORT).show();
         }else {

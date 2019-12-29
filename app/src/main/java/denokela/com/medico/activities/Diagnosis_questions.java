@@ -80,7 +80,7 @@ public class Diagnosis_questions extends AppCompatActivity{
         });
 
 
-        sharedPreferences = getSharedPreferences("userNo",MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("user",MODE_PRIVATE);
 
         dqViewModel = ViewModelProviders.of(this).get(DQViewModel.class);
         diseaseViewModel = ViewModelProviders.of(this).get(DiseaseViewModel.class);
