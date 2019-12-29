@@ -54,6 +54,10 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
         notifyDataSetChanged();
     }
 
+    public PrescriptionEntity getPrescriptionAt(int position){
+        return prescriptions.get(position);
+    }
+
     class PrescriptionHolder extends RecyclerView.ViewHolder{
         private TextView tv_Drugform,tv_DrugName,tvDrugInstruction,tvDrugAmount;
 

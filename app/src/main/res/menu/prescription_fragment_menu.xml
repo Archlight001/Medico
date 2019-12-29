@@ -4,7 +4,10 @@
 
     <item
         android:id="@+id/change_user"
-        android:icon="@drawable/ic_person"
-        android:title="Change User"
-        app:showAsAction="ifRoom"/>
+        android:title="Select User"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/delete_all_prescriptions"
+        android:title="Delete all Prescriptions"
+        app:showAsAction="never"/>
 </menu>

@@ -24,19 +24,19 @@ public class PrescriptionRepository {
 
 
     public void insert(PrescriptionEntity prescriptionEntity){
-        new AsyncTasker(prescriptionDao,"insert").execute(prescriptionEntity);
+        new AsyncTasker(prescriptionDao,"insert",0).execute(prescriptionEntity);
     }
 
     public void update(PrescriptionEntity prescriptionEntity){
-        new AsyncTasker(prescriptionDao,"update").execute(prescriptionEntity);
+        new AsyncTasker(prescriptionDao,"update",0).execute(prescriptionEntity);
     }
 
     public void delete(PrescriptionEntity prescriptionEntity){
-        new AsyncTasker(prescriptionDao,"delete").execute(prescriptionEntity);
+        new AsyncTasker(prescriptionDao,"delete",0).execute(prescriptionEntity);
     }
 
-    public void deleteAllPrescriptions(){
-        new AsyncTasker(prescriptionDao,"deleteAll").execute();
+    public void deleteAllPrescriptions(Integer patientId){
+        new AsyncTasker(prescriptionDao,"deleteAll",patientId).execute();
     }
 
     public LiveData<List<PrescriptionEntity>> getAllPrescriptions(){
@@ -56,10 +56,12 @@ public class PrescriptionRepository {
     private static class AsyncTasker extends android.os.AsyncTask<PrescriptionEntity,Void,Void>{
         public PrescriptionDao prescriptionDao;
         private String action;
+        private Integer patientId;
 
-        private AsyncTasker(PrescriptionDao prescriptionDao, String action){
+        private AsyncTasker(PrescriptionDao prescriptionDao, String action,Integer patientId){
             this.prescriptionDao = prescriptionDao;
             this.action = action;
+            this.patientId = patientId;
         }
 
 
@@ -72,7 +74,7 @@ public class PrescriptionRepository {
             }else if(action.equals("delete")){
                 prescriptionDao.delete(prescriptionEntities[0]);
             }else if(action.equals("deleteAll")){
-                prescriptionDao.deleteAllPrescriptions();
+                prescriptionDao.deleteAllPrescriptions(patientId);
             }
             return null;
         }

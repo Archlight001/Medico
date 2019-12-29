@@ -24,8 +24,8 @@ public interface PrescriptionDao {
     @Delete
     void delete(PrescriptionEntity prescriptionEntity);
 
-    @Query("DELETE FROM prescription_table")
-    void deleteAllPrescriptions();
+    @Query("DELETE FROM prescription_table WHERE PatientID=:value")
+    void deleteAllPrescriptions(int value);
 
     @Query("SELECT * FROM prescription_table")
     LiveData<List<PrescriptionEntity>> getAllPrescriptions();

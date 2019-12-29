@@ -33,8 +33,8 @@ public class PrescriptionViewModel extends AndroidViewModel {
     }
 
 
-    public void deleteAllNotes(){
-        repository.deleteAllPrescriptions();
+    public void deleteAllPrescriptions(Integer patientId){
+        repository.deleteAllPrescriptions(patientId);
     }
     public LiveData<List<PrescriptionEntity>> getAllPrescriptions(){
         return  allPrescriptions;
