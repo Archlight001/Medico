@@ -6,8 +6,11 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import denokela.com.medico.AppDatabase;
+import denokela.com.medico.dao.PrescriptionDao;
 import denokela.com.medico.entities.PrescriptionEntity;
 import denokela.com.medico.R;
 import denokela.com.medico.fragments.TimePickerFragment;
@@ -43,7 +48,11 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
     Calendar c=Calendar.getInstance();
 
     UserViewModel userViewModel;
-    PrescriptionViewModel prescriptionViewModel;
+
+
+    Integer hour=0;
+    Integer minute=0;
+
 
     public static final String EXTRA_PATIENT_ID="denokela.com.medico.EXTRA_PATIENT_NAME";
     public static final String EXTRA_DRUG_NAME="denokela.com.medico.EXTRA_DRUG_NAME";
@@ -52,8 +61,10 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
     public static final String EXTRA_DRUG_INTERVAL="denokela.com.medico.EXTRA_DRUG_INTERVAL";
     public static final String EXTRA_TOTAL_DAYS="denokela.com.medico.EXTRA_TOTAL_DAYS";
     public static final String EXTRA_COUNT="denokela.com.medico.EXTRA_COUNT";
+    public static final String ALARM_HOUR="denokela.com.medico.ALARM_HOUR";
+    public static final String ALARM_MINUTE="denokela.com.medico.ALARM_MINUTE";
 
-
+    private static final String TAG = "AddPrescription";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,38 +118,48 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private void savePrescription(Calendar c){
+    private void savePrescription(){
         String drugname = etDrugName.getText().toString();
         int patientID = spinPatName.getSelectedItemPosition()+1;
-//        String patientname = spinPatName.getSelectedItem().toString();
         String drugform = spinDrugform.getSelectedItem().toString();
         int drugamount = npDrugamount.getValue();
         int druginterval = npDruginterval.getValue();
         int totaldays = npTotaldays.getValue();
-        int count = totaldays*drugamount;
+        int count =(totaldays*(24/druginterval));
 
-        prescriptionViewModel= ViewModelProviders.of(this).get(PrescriptionViewModel.class);
-        prescriptionViewModel.getPrescriptionPatientDrug(patientID,drugname).observe(this, new Observer<List<PrescriptionEntity>>() {
-            @Override
-            public void onChanged(List<PrescriptionEntity> prescriptionEntities) {
-                if(prescriptionEntities.size() > 0){
-                    Toast.makeText(getApplicationContext(),"Prescription Already Exists for this Patient and Drug",Toast.LENGTH_LONG).show();
-                }else{
-                    Intent data = new Intent();
-                    data.putExtra(EXTRA_PATIENT_ID,patientID);
-                    data.putExtra(EXTRA_DRUG_NAME,drugname);
-                    data.putExtra(EXTRA_DRUG_FORM,drugform);
-                    data.putExtra(EXTRA_DRUG_INTERVAL,druginterval);
-                    data.putExtra(EXTRA_DRUG_AMOUNT,drugamount);
-                    data.putExtra(EXTRA_TOTAL_DAYS,totaldays);
-                    data.putExtra(EXTRA_COUNT,count);
+        if(drugname.trim().length()==0) {
+            Toast.makeText(this, "Kindly enter a drug name", Toast.LENGTH_SHORT).show();
+        }else if(hour==0 || minute ==0){
+            Toast.makeText(this, "Kindly enter a time for the first dose", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Asynctask asynctask = new Asynctask(new Asynctask.AsyncResponse() {
+                @Override
+                public void processfinish(List<PrescriptionEntity> output) {
+                    if(output.size()==0){
+                        Intent data = new Intent();
+                        data.putExtra(EXTRA_PATIENT_ID, patientID);
+                        data.putExtra(EXTRA_DRUG_NAME, drugname);
+                        data.putExtra(EXTRA_DRUG_FORM, drugform);
+                        data.putExtra(EXTRA_DRUG_INTERVAL, druginterval);
+                        data.putExtra(EXTRA_DRUG_AMOUNT, drugamount);
+                        data.putExtra(EXTRA_TOTAL_DAYS, totaldays);
+                        data.putExtra(EXTRA_COUNT, count);
+                        data.putExtra(ALARM_HOUR, hour);
+                        data.putExtra(ALARM_MINUTE, minute);
 
-                    setResult(RESULT_OK,data);
-                    finish();
+                        Log.d(TAG, "onChanged: Adding preescription");
+                        setResult(RESULT_OK, data);
+
+                        Toast.makeText(AddPrescription.this, "Adding Prescription", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Prescription Already Exists for this Patient and Drug", Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
-        });
-
+            },getApplicationContext(),patientID,drugname);
+            asynctask.execute();
+        }
 
 
 
@@ -155,7 +176,7 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_prescription:
-                savePrescription(c);
+                savePrescription();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -174,8 +195,9 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
         c.set(Calendar.HOUR_OF_DAY,hourofDay);
         c.set(Calendar.MINUTE,minute);
         c.set(Calendar.SECOND,0);
-
-        updateTimeText(c);
+        hour = hourofDay;
+        this.minute=minute;
+       updateTimeText(c);
 
     }
 
@@ -185,3 +207,34 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
         tvShowtime.setText(timeText);
     }
 }
+
+ class Asynctask extends AsyncTask<List<PrescriptionEntity>,Void,List<PrescriptionEntity>>{
+
+     public interface AsyncResponse{
+        void processfinish(List<PrescriptionEntity> output);
+    }
+    int patientID;
+     String drugname;
+     Context context;
+    public AsyncResponse delegate=null;
+     public Asynctask(AsyncResponse delegate, Context context, int patientID, String drugname) {
+        this.delegate=delegate;
+        this.patientID = patientID;
+        this.drugname = drugname;
+        this.context = context;
+     }
+
+
+
+     @Override
+    protected List<PrescriptionEntity> doInBackground(List<PrescriptionEntity>... lists) {
+
+         return AppDatabase.getInstance(context).prescriptionDao().getPrescriptionPatientDrug(patientID,drugname);
+     }
+
+     @Override
+     protected void onPostExecute(List<PrescriptionEntity> prescriptionEntities) {
+        delegate.processfinish(prescriptionEntities);
+     }
+
+ }

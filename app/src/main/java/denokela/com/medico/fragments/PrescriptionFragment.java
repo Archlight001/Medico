@@ -1,5 +1,8 @@
 package denokela.com.medico.fragments;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,9 +29,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import denokela.com.medico.AlertReceiver;
 import denokela.com.medico.activities.AddPrescription;
+import denokela.com.medico.activities.MainActivity;
 import denokela.com.medico.entities.PrescriptionEntity;
 import denokela.com.medico.R;
 import denokela.com.medico.entities.UserEntity;
@@ -48,14 +54,14 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
 
-    public Integer channellerID=0;
-
+    Integer lastPrescriptionId=0;
 
     FloatingActionButton btnaddPrescription;
 
     public static final int ADD_PRESCRIPTION_REQUEST = 2;
     public static final int ADD_USER_REQUEST = 3;
 
+    Boolean firsttime =true;
 
     @Nullable
     @Override
@@ -104,18 +110,43 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                     tvInstruction.setVisibility(View.VISIBLE);
                     return;
                 }
-                Toast.makeText(getContext(), prescriptionEntities.get(0).getDrugName(), Toast.LENGTH_SHORT).show();
                 prescriptionAdapter.setPrescriptions(prescriptionEntities);
 
             }
         });
 
+        if(firsttime){
+            prescriptionViewModel.getAllPrescriptions().observe(this, new Observer<List<PrescriptionEntity>>() {
+                @Override
+                public void onChanged(List<PrescriptionEntity> prescriptionEntities) {
+                    if(prescriptionEntities.size()>0) {
+                        lastPrescriptionId = prescriptionEntities.get(prescriptionEntities.size() - 1).getPrescription_Id();
+                    }
+
+                }
+            });
+            firsttime=false;
+        }
+
+
     }
+
+
+
+
 
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(getContext(), AddPrescription.class);
-        startActivityForResult(intent, ADD_PRESCRIPTION_REQUEST);
+        if(users.size()==1){
+            Intent gotoUserList = new Intent(getContext(), UserReg.class);
+            gotoUserList.putExtra("PrescriptionFragment","pFragment");
+            startActivityForResult(gotoUserList,ADD_USER_REQUEST);
+            users.clear();
+            userid.clear();
+        }else {
+            Intent intent = new Intent(getContext(), AddPrescription.class);
+            startActivityForResult(intent, ADD_PRESCRIPTION_REQUEST);
+        }
     }
 
     @Override
@@ -182,7 +213,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ADD_PRESCRIPTION_REQUEST && resultCode == getActivity().RESULT_OK) {
             String drugname = data.getStringExtra(AddPrescription.EXTRA_DRUG_NAME);
@@ -192,12 +222,36 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             int druginterval = data.getIntExtra(AddPrescription.EXTRA_DRUG_INTERVAL, 0);
             int totaldays = data.getIntExtra(AddPrescription.EXTRA_TOTAL_DAYS, 0);
             int count = data.getIntExtra(AddPrescription.EXTRA_COUNT, 0);
-
+            int hour = data.getIntExtra(AddPrescription.ALARM_HOUR,0);
+            int minute = data.getIntExtra(AddPrescription.ALARM_MINUTE,0);
+            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
             PrescriptionEntity prescription = new PrescriptionEntity(patientid,drugname,drugform,druginterval,drugamount,totaldays,count);
             prescriptionViewModel.insert(prescription);
-            getActivity().recreate();
-            Toast.makeText(getContext(), "Prescription Added", Toast.LENGTH_SHORT).show();
+            String key ="";
+            if(lastPrescriptionId !=0){
+                lastPrescriptionId++;
+                key=String.valueOf(lastPrescriptionId);
+            }else{
+                key=String.valueOf(lastPrescriptionId+1);
+            }
 
+            Intent intent = new Intent(getContext(), AlertReceiver.class);
+
+            Toast.makeText(getContext(), key, Toast.LENGTH_SHORT).show();
+            String message = "Time to take "+drugname;
+            intent.putExtra("key",key);
+            intent.putExtra("message",message);
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.HOUR_OF_DAY,hour);
+            c.set(Calendar.MINUTE,minute);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), Integer.parseInt(key),intent,0);
+
+            if(c.before(Calendar.getInstance())){
+                c.add(Calendar.DATE,1);
+            }
+            getActivity().recreate();
+           alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(),60*1000,pendingIntent);
 
         } else if(requestCode == ADD_USER_REQUEST && resultCode == getActivity().RESULT_OK){
             String fname = data.getStringExtra(UserReg.EXTRA_FNAME);
@@ -205,8 +259,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             int age = data.getIntExtra(UserReg.EXTRA_AGE,0);
             users.clear();
             userid.clear();
-            getActivity().finish();
-            startActivity(getActivity().getIntent());
+//            getActivity().finish();
+//            startActivity(getActivity().getIntent());
             UserEntity user = new UserEntity(fname,lname,age);
             userViewModel.insert(user);
 
@@ -226,47 +280,4 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
 }
 
-//Notification class
-
-//public class NotificationHelper extends ContextWrapper {
-//    public static final String channel1ID = "channel1ID";
-//    public static final String channel1Name = "Channel 1";
-//
-//    private  NotificationManager mManager;
-//    public NotificationHelper(Context base) {
-//
-//        super(base);
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-//            createChannels();
-//        }
-//    }
-//
-//    @TargetApi(Build.VERSION_CODES.O)
-//    public void createChannels() {
-//        NotificationChannel channel1 = new NotificationChannel(channel1ID, channel1Name, NotificationManager.IMPORTANCE_DEFAULT);
-//        channel1.enableLights(true);
-//        channel1.enableVibration(true);
-//        channel1.setLightColor(R.color.colorPrimary);
-//        channel1.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-//
-//        getManager().createNotificationChannel(channel1);
-//
-//    }
-//
-//    public NotificationManager getManager(){
-//        if(mManager == null){
-//            mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        }
-//
-//        return mManager;
-//    }
-//
-//    public NotificationCompat.Builder getChannel1Notification(String title, String message){
-//        return new NotificationCompat.Builder(getApplicationContext(), channel1ID )
-//                .setContentTitle(title)
-//                .setContentText(message)
-//                .setSmallIcon(R.drawable.ic_one);
-//    }
-//
-//}
 

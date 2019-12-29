@@ -105,7 +105,6 @@
             android:id="@+id/tv_initialtime"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textAlignment="center"
-            android:text="Bla Bla Bla"
             />
 
 

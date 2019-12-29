@@ -81,10 +81,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            //userDao.insert(new UserEntity("UFirstName", "Usurname", 10));
-            prescriptionDao.insert(new PrescriptionEntity(1, "Ampiclox", "Tablet", 4, 2, 10, 1));
-            prescriptionDao.insert(new PrescriptionEntity(2, "Wrythromycin", "Syrup", 4, 2, 10, 1));
-
 
             dqDao.insert(new DQEntity("Are you having Bloody stool or Dark/Brown Color Urine","Gastroenteritis"));
             dqDao.insert(new DQEntity("Are you having aches in your joints or Muscles","Gastroenteritis"));

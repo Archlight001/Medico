@@ -48,7 +48,7 @@ public class PrescriptionRepository {
         return prescriptionDao.getCertainPrescription(v);
     }
 
-    public LiveData<List<PrescriptionEntity>> getPrescriptionPatientDrug(Integer patID, String DrugName){
+    public List<PrescriptionEntity> getPrescriptionPatientDrug(Integer patID, String DrugName){
         return prescriptionDao.getPrescriptionPatientDrug(patID,DrugName);
     }
 

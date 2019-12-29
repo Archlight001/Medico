@@ -34,7 +34,7 @@ public interface PrescriptionDao {
             LiveData<List<PrescriptionEntity>> getCertainPrescription(int value);
 
     @Query("SELECT * FROM prescription_table WHERE PatientID= :value AND DrugName= :drugNameValue")
-    LiveData<List<PrescriptionEntity>> getPrescriptionPatientDrug(int value, String drugNameValue);
+    List<PrescriptionEntity> getPrescriptionPatientDrug(int value, String drugNameValue);
 
 
 

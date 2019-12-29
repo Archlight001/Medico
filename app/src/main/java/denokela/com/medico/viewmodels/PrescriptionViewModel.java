@@ -43,7 +43,7 @@ public class PrescriptionViewModel extends AndroidViewModel {
     public LiveData<List<PrescriptionEntity>> getCertainPrescription(Integer value){
         return repository.getPrescriptions(value);
     }
-    public LiveData<List<PrescriptionEntity>> getPrescriptionPatientDrug(Integer patID, String DrugName){
+    public List<PrescriptionEntity> getPrescriptionPatientDrug(Integer patID, String DrugName){
         return repository.getPrescriptionPatientDrug(patID, DrugName);
     }
 
