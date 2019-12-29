@@ -24,19 +24,22 @@ public class PrescriptionRepository {
 
 
     public void insert(PrescriptionEntity prescriptionEntity){
-        new AsyncTasker(prescriptionDao,"insert",0).execute(prescriptionEntity);
+        new AsyncTasker(prescriptionDao,"insert",0,0).execute(prescriptionEntity);
     }
 
     public void update(PrescriptionEntity prescriptionEntity){
-        new AsyncTasker(prescriptionDao,"update",0).execute(prescriptionEntity);
+        new AsyncTasker(prescriptionDao,"update",0,0).execute(prescriptionEntity);
     }
 
     public void delete(PrescriptionEntity prescriptionEntity){
-        new AsyncTasker(prescriptionDao,"delete",0).execute(prescriptionEntity);
+        new AsyncTasker(prescriptionDao,"delete",0,0).execute(prescriptionEntity);
     }
 
     public void deleteAllPrescriptions(Integer patientId){
-        new AsyncTasker(prescriptionDao,"deleteAll",patientId).execute();
+        new AsyncTasker(prescriptionDao,"deleteAll",patientId,0).execute();
+    }
+    public void updateCount(Integer count,Integer patientId){
+        new AsyncTasker(prescriptionDao,"updateCount",patientId,count).execute();
     }
 
     public LiveData<List<PrescriptionEntity>> getAllPrescriptions(){
@@ -56,12 +59,14 @@ public class PrescriptionRepository {
     private static class AsyncTasker extends android.os.AsyncTask<PrescriptionEntity,Void,Void>{
         public PrescriptionDao prescriptionDao;
         private String action;
-        private Integer patientId;
+        private Integer id;
+        private Integer count;
 
-        private AsyncTasker(PrescriptionDao prescriptionDao, String action,Integer patientId){
+        private AsyncTasker(PrescriptionDao prescriptionDao, String action,Integer id,Integer count){
             this.prescriptionDao = prescriptionDao;
             this.action = action;
-            this.patientId = patientId;
+            this.id = id;
+            this.count=count;
         }
 
 
@@ -74,7 +79,9 @@ public class PrescriptionRepository {
             }else if(action.equals("delete")){
                 prescriptionDao.delete(prescriptionEntities[0]);
             }else if(action.equals("deleteAll")){
-                prescriptionDao.deleteAllPrescriptions(patientId);
+                prescriptionDao.deleteAllPrescriptions(id);
+            }else if(action.equals("updateCount")){
+                prescriptionDao.updateCount(count,id);
             }
             return null;
         }

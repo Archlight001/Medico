@@ -43,28 +43,28 @@ import denokela.com.medico.viewmodels.UserViewModel;
 public class AddPrescription extends AppCompatActivity implements View.OnClickListener, TimePickerDialog.OnTimeSetListener {
     private EditText etDrugName;
     private Spinner spinDrugform, spinPatName;
-    private NumberPicker npDrugamount, npDruginterval,npTotaldays;
+    private NumberPicker npDrugamount, npDruginterval, npTotaldays;
     Button btnSetTIme;
     TextView tvShowtime;
 
-    Calendar c=Calendar.getInstance();
+    Calendar c = Calendar.getInstance();
 
     UserViewModel userViewModel;
 
 
-    Integer hour=0;
-    Integer minute=0;
+    Integer hour = 0;
+    Integer minute = 0;
 
 
-    public static final String EXTRA_PATIENT_ID="denokela.com.medico.EXTRA_PATIENT_NAME";
-    public static final String EXTRA_DRUG_NAME="denokela.com.medico.EXTRA_DRUG_NAME";
-    public static final String EXTRA_DRUG_FORM="denokela.com.medico.EXTRA_DRUG_FORM";
-    public static final String EXTRA_DRUG_AMOUNT="denokela.com.medico.EXTRA_DRUG_AMOUNT";
-    public static final String EXTRA_DRUG_INTERVAL="denokela.com.medico.EXTRA_DRUG_INTERVAL";
-    public static final String EXTRA_TOTAL_DAYS="denokela.com.medico.EXTRA_TOTAL_DAYS";
-    public static final String EXTRA_COUNT="denokela.com.medico.EXTRA_COUNT";
-    public static final String ALARM_HOUR="denokela.com.medico.ALARM_HOUR";
-    public static final String ALARM_MINUTE="denokela.com.medico.ALARM_MINUTE";
+    public static final String EXTRA_PATIENT_ID = "denokela.com.medico.EXTRA_PATIENT_NAME";
+    public static final String EXTRA_DRUG_NAME = "denokela.com.medico.EXTRA_DRUG_NAME";
+    public static final String EXTRA_DRUG_FORM = "denokela.com.medico.EXTRA_DRUG_FORM";
+    public static final String EXTRA_DRUG_AMOUNT = "denokela.com.medico.EXTRA_DRUG_AMOUNT";
+    public static final String EXTRA_DRUG_INTERVAL = "denokela.com.medico.EXTRA_DRUG_INTERVAL";
+    public static final String EXTRA_TOTAL_DAYS = "denokela.com.medico.EXTRA_TOTAL_DAYS";
+    public static final String EXTRA_COUNT = "denokela.com.medico.EXTRA_COUNT";
+    public static final String ALARM_HOUR = "denokela.com.medico.ALARM_HOUR";
+    public static final String ALARM_MINUTE = "denokela.com.medico.ALARM_MINUTE";
 
     private static final String TAG = "AddPrescription";
 
@@ -114,37 +114,36 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
         });
 
 
-
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
         setTitle("Add Prescription");
 
     }
 
-    private void savePrescription(){
+    private void savePrescription() {
         String drugname = etDrugName.getText().toString();
-        int patientID = spinPatName.getSelectedItemPosition()+1;
+        int patientID = spinPatName.getSelectedItemPosition() + 1;
         String drugform = spinDrugform.getSelectedItem().toString();
         int drugamount = npDrugamount.getValue();
         int druginterval = npDruginterval.getValue();
         int totaldays = npTotaldays.getValue();
-        int count =(totaldays*(24/druginterval));
+        int count = (totaldays * (24 / druginterval));
 
-        String patientName =spinPatName.getSelectedItem().toString();
+        String patientName = spinPatName.getSelectedItem().toString();
 
-        if(drugname.trim().length()==0) {
+        if (drugname.trim().length() == 0) {
             Toast.makeText(this, "Kindly enter a drug name", Toast.LENGTH_SHORT).show();
-        }else if(hour==0 || minute ==0){
+        } else if (hour == 0 || minute == 0) {
             Toast.makeText(this, "Kindly enter a time for the first dose", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("You're about to add a new Prescription for "+patientName);
+            builder.setMessage("You're about to add a new Prescription for " + patientName);
             builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Asynctask asynctask = new Asynctask(new Asynctask.AsyncResponse() {
                         @Override
                         public void processfinish(List<PrescriptionEntity> output) {
-                            if(output.size()==0){
+                            if (output.size() == 0) {
                                 dialogInterface.dismiss();
                                 Intent data = new Intent();
                                 data.putExtra(EXTRA_PATIENT_ID, patientID);
@@ -162,11 +161,11 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
 
                                 Toast.makeText(AddPrescription.this, "Adding Prescription", Toast.LENGTH_SHORT).show();
                                 finish();
-                            }else{
+                            } else {
                                 Toast.makeText(getApplicationContext(), "Prescription Already Exists for this Patient and Drug", Toast.LENGTH_LONG).show();
                             }
                         }
-                    },getApplicationContext(),patientID,drugname);
+                    }, getApplicationContext(), patientID, drugname);
                     asynctask.execute();
 
                 }
@@ -205,55 +204,56 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View view) {
         DialogFragment timepicker = new TimePickerFragment();
-        timepicker.show(getSupportFragmentManager(),"timepicker");
+        timepicker.show(getSupportFragmentManager(), "timepicker");
     }
 
 
     @Override
     public void onTimeSet(TimePicker timePicker, int hourofDay, int minute) {
-        c.set(Calendar.HOUR_OF_DAY,hourofDay);
-        c.set(Calendar.MINUTE,minute);
-        c.set(Calendar.SECOND,0);
+        c.set(Calendar.HOUR_OF_DAY, hourofDay);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
         hour = hourofDay;
-        this.minute=minute;
-       updateTimeText(c);
+        this.minute = minute;
+        updateTimeText(c);
 
     }
 
     private void updateTimeText(Calendar c) {
-        String timeText= "First Prescription to be taken at: ";
-        timeText+= DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime());
+        String timeText = "First Prescription to be taken at: ";
+        timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime());
         tvShowtime.setText(timeText);
     }
 }
 
- class Asynctask extends AsyncTask<List<PrescriptionEntity>,Void,List<PrescriptionEntity>>{
+class Asynctask extends AsyncTask<List<PrescriptionEntity>, Void, List<PrescriptionEntity>> {
 
-     public interface AsyncResponse{
+    public interface AsyncResponse {
         void processfinish(List<PrescriptionEntity> output);
     }
+
     int patientID;
-     String drugname;
-     Context context;
-    public AsyncResponse delegate=null;
-     public Asynctask(AsyncResponse delegate, Context context, int patientID, String drugname) {
-        this.delegate=delegate;
+    String drugname;
+    Context context;
+    public AsyncResponse delegate = null;
+
+    public Asynctask(AsyncResponse delegate, Context context, int patientID, String drugname) {
+        this.delegate = delegate;
         this.patientID = patientID;
         this.drugname = drugname;
         this.context = context;
-     }
+    }
 
 
-
-     @Override
+    @Override
     protected List<PrescriptionEntity> doInBackground(List<PrescriptionEntity>... lists) {
 
-         return AppDatabase.getInstance(context).prescriptionDao().getPrescriptionPatientDrug(patientID,drugname);
-     }
+        return AppDatabase.getInstance(context).prescriptionDao().getPrescriptionPatientDrug(patientID, drugname);
+    }
 
-     @Override
-     protected void onPostExecute(List<PrescriptionEntity> prescriptionEntities) {
+    @Override
+    protected void onPostExecute(List<PrescriptionEntity> prescriptionEntities) {
         delegate.processfinish(prescriptionEntities);
-     }
+    }
 
- }
+}

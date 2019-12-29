@@ -36,6 +36,10 @@ public class PrescriptionViewModel extends AndroidViewModel {
     public void deleteAllPrescriptions(Integer patientId){
         repository.deleteAllPrescriptions(patientId);
     }
+
+    public void updateCount(Integer count,Integer id){
+        repository.updateCount(count,id);
+    }
     public LiveData<List<PrescriptionEntity>> getAllPrescriptions(){
         return  allPrescriptions;
     }

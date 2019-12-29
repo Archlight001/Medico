@@ -30,12 +30,13 @@ public interface PrescriptionDao {
     @Query("SELECT * FROM prescription_table")
     LiveData<List<PrescriptionEntity>> getAllPrescriptions();
 
-    @Query("SELECT * FROM prescription_table WHERE PatientID= :value")
+    @Query("SELECT * FROM prescription_table WHERE PatientID= :value OR Prescription_Id=:value")
             LiveData<List<PrescriptionEntity>> getCertainPrescription(int value);
 
     @Query("SELECT * FROM prescription_table WHERE PatientID= :value AND DrugName= :drugNameValue")
     List<PrescriptionEntity> getPrescriptionPatientDrug(int value, String drugNameValue);
 
-
+    @Query("UPDATE prescription_table SET Counter =:count WHERE Prescription_Id=:id")
+    void updateCount(Integer count, Integer id);
 
 }

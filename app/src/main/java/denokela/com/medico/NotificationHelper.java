@@ -12,26 +12,31 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
+import denokela.com.medico.activities.MainActivity;
+
 
 public class NotificationHelper extends ContextWrapper {
 
     String channelid;
     String messageBody;
+    String name;
 
-    private  NotificationManager mManager;
-    public NotificationHelper(Context base, String channelid, String messageBody) {
+    private NotificationManager mManager;
+
+    public NotificationHelper(Context base, String channelid,String name, String messageBody) {
         super(base);
 
         this.channelid = channelid;
         this.messageBody = messageBody;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        this.name=name;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannels();
         }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
     public void createChannels() {
-        NotificationChannel channel = new NotificationChannel(channelid, "Medico"+channelid, NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel channel = new NotificationChannel(channelid, "Medico" + channelid, NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(true);
         channel.enableVibration(true);
         channel.setLightColor(R.color.colorPrimary);
@@ -40,8 +45,8 @@ public class NotificationHelper extends ContextWrapper {
         getManager().createNotificationChannel(channel);
     }
 
-    public NotificationManager getManager(){
-        if(mManager == null){
+    public NotificationManager getManager() {
+        if (mManager == null) {
             mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
 
@@ -49,14 +54,15 @@ public class NotificationHelper extends ContextWrapper {
     }
 
 
-    public NotificationCompat.Builder getChannelNotification(){
-        Intent intent = new Intent(this,NotificationActivity.class);
-        intent.putExtra("key",channelid);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                |Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    public NotificationCompat.Builder getChannelNotification() {
+        Intent intent = new Intent(this, NotificationActivity.class);
+        intent.putExtra("key", channelid);
+        intent.putExtra("name",name);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+//                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,Integer.parseInt(channelid),intent,PendingIntent.FLAG_UPDATE_CURRENT);
-        return new NotificationCompat.Builder(getApplicationContext(), channelid )
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, Integer.parseInt(channelid), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return new NotificationCompat.Builder(getApplicationContext(), channelid)
                 .setContentTitle("Prescription Reminder")
                 .setContentText(messageBody)
                 .setSmallIcon(R.drawable.ic_casino)

@@ -34,6 +34,7 @@
         <activity
             android:name=".activities.UserList"
             android:launchMode="singleTop" />
+        <activity android:name=".NotificationActivity"/>
         <activity
             android:name=".activities.UserReg"
             android:parentActivityName=".activities.UserList">
