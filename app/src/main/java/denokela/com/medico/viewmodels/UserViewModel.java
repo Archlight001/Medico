@@ -26,8 +26,8 @@ public class UserViewModel extends AndroidViewModel {
     public void update(UserEntity userEntity){
         repository.update(userEntity);
     }
-    public void delete(UserEntity userEntity){
-        repository.delete(userEntity);
+    public void delete(Integer value){
+        repository.delete(value);
     }
 
     public void deleteAllUsers(){

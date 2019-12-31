@@ -68,6 +68,7 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
 
     private static final String TAG = "AddPrescription";
 
+    List<Integer> patId = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +85,7 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
 
         btnSetTIme.setOnClickListener(this);
 
-        List<Integer> patId = new ArrayList<>();
+
 
         npDrugamount.setMinValue(1);
         npDrugamount.setMaxValue(10);
@@ -121,13 +122,12 @@ public class AddPrescription extends AppCompatActivity implements View.OnClickLi
 
     private void savePrescription() {
         String drugname = etDrugName.getText().toString();
-        int patientID = spinPatName.getSelectedItemPosition() + 1;
+        int patientID =  patId.get(spinPatName.getSelectedItemPosition());
         String drugform = spinDrugform.getSelectedItem().toString();
         int drugamount = npDrugamount.getValue();
         int druginterval = npDruginterval.getValue();
         int totaldays = npTotaldays.getValue();
         int count = (totaldays * (24 / druginterval));
-
         String patientName = spinPatName.getSelectedItem().toString();
 
         if (drugname.trim().length() == 0) {

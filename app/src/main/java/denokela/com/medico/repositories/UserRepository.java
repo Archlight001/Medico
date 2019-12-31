@@ -21,19 +21,19 @@ public class UserRepository {
     }
 
     public void insert(UserEntity userEntity){
-        new AsyncTasker(userDao,"insert").execute(userEntity);
+        new AsyncTasker(userDao,"insert",0).execute(userEntity);
     }
 
     public void update(UserEntity userEntity){
-        new AsyncTasker(userDao,"update").execute(userEntity);
+        new AsyncTasker(userDao,"update",0).execute(userEntity);
     }
 
-    public void delete(UserEntity userEntity){
-        new AsyncTasker(userDao,"delete").execute(userEntity);
+    public void delete(Integer value){
+        new AsyncTasker(userDao,"delete",value).execute();
     }
 
     public void deleteAllUsers(){
-        new AsyncTasker(userDao,"deleteAll").execute();
+        new AsyncTasker(userDao,"deleteAll",0).execute();
     }
 
     public LiveData<List<UserEntity>> getAllUsers(){
@@ -45,10 +45,12 @@ public class UserRepository {
     private static class AsyncTasker extends android.os.AsyncTask<UserEntity,Void,Void>{
         private UserDao userDao;
         private String action;
+        Integer value;
 
-        private AsyncTasker(UserDao userDao, String action){
+        private AsyncTasker(UserDao userDao, String action,Integer value){
             this.userDao = userDao;
             this.action = action;
+            this.value = value;
         }
 
 
@@ -59,7 +61,7 @@ public class UserRepository {
             }else if(action.equals("update")){
                 userDao.update(userEntities[0]);
             }else if(action.equals("delete")){
-                userDao.delete(userEntities[0]);
+                userDao.delete(value);
             }else if(action.equals("deleteAll")){
                 userDao.deleteAllUser();
             }

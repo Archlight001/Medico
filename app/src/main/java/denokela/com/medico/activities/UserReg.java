@@ -12,14 +12,12 @@ import denokela.com.medico.R;
 
 public class UserReg extends AppCompatActivity implements View.OnClickListener {
 
-    EditText fName,lName,age;
+    EditText fName,lName;
     Button regBtn;
     String firstName,lastName;
-    int ageVal;
 
     public static final String EXTRA_FNAME ="za-fname";
     public static final String EXTRA_LNAME ="za-lname";
-    public static final String EXTRA_AGE ="za-age";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +25,6 @@ public class UserReg extends AppCompatActivity implements View.OnClickListener {
 
         fName = findViewById(R.id.etFirstname);
         lName = findViewById(R.id.etLastname);
-        age = findViewById(R.id.etAge);
         regBtn= findViewById(R.id.btnReg);
 
         regBtn.setOnClickListener(this);
@@ -41,18 +38,15 @@ public class UserReg extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View view) {
         firstName = fName.getText().toString();
         lastName = lName.getText().toString();
-        String agestring = age.getText().toString();
 
-        if(firstName.trim().isEmpty() || lastName.trim().isEmpty() || agestring.trim().isEmpty()){
+        if(firstName.trim().isEmpty() || lastName.trim().isEmpty()){
             Toast.makeText(this, "Please Fill in the blank fields", Toast.LENGTH_SHORT).show();
             return;
         }
-        ageVal = Integer.parseInt(age.getText().toString());
 
         Intent data = new Intent();
         data.putExtra(EXTRA_FNAME,firstName);
         data.putExtra(EXTRA_LNAME,lastName);
-        data.putExtra(EXTRA_AGE,ageVal);
         setResult(RESULT_OK,data);
         finish();
 

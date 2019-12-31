@@ -25,23 +25,12 @@
         android:gravity="center"
         android:hint="LastName" />
 
-    <EditText
-        android:id="@+id/etAge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/etLastname"
-        android:digits="0,1,2,3,4,5,6,7,8,9"
-        android:ellipsize="start"
-        android:gravity="center"
-        android:hint="Age"
-        android:inputType="number"
-        android:maxLength="2" />
 
     <Button
         android:id="@+id/btnReg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/etAge"
+        android:layout_below="@+id/etLastname"
         android:background="@color/colorPrimaryDark"
         android:text="Register"
         android:textColor="@color/cardview_light_background"

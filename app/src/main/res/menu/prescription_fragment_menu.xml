@@ -7,6 +7,14 @@
         android:title="Select User"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/delete_current_user"
+        android:title="Delete Current User"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/delete_all_users"
+        android:title="Delete all Users"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/delete_all_prescriptions"
         android:title="Delete all Prescriptions"
         app:showAsAction="never"/>

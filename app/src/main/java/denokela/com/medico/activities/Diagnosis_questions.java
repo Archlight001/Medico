@@ -34,9 +34,7 @@ public class Diagnosis_questions extends AppCompatActivity{
     DQViewModel dqViewModel;
     DiseaseViewModel diseaseViewModel;
 
-    SharedPreferences sharedPreferences;
 
-    String disease="";
     List<DQEntity> diagnosisquestions;
     List<DiseaseSymptomsEntity> gastroSymptoms,choleraSymptoms,typhoidSymptoms,meningitisSymptoms,renalfailureSymptoms;
 
@@ -79,8 +77,6 @@ public class Diagnosis_questions extends AppCompatActivity{
             }
         });
 
-
-        sharedPreferences = getSharedPreferences("user",MODE_PRIVATE);
 
         dqViewModel = ViewModelProviders.of(this).get(DQViewModel.class);
         diseaseViewModel = ViewModelProviders.of(this).get(DiseaseViewModel.class);
@@ -366,8 +362,6 @@ public class Diagnosis_questions extends AppCompatActivity{
                 return t1.getPercent().compareTo(entries.getPercent());
             }
         });
-
-        Integer patientID = sharedPreferences.getInt("CurrentID",1);
 
 
         //Above sorting mechanism is for API level 24 or higher

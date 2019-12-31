@@ -31,7 +31,9 @@ public class PrescriptionViewModel extends AndroidViewModel {
     public void delete(PrescriptionEntity prescriptionEntity){
         repository.delete(prescriptionEntity);
     }
-
+    public void deleteEveryPrescription(){
+        repository.deleteEveryPrescription();
+    }
 
     public void deleteAllPrescriptions(Integer patientId){
         repository.deleteAllPrescriptions(patientId);

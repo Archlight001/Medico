@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     String LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
 
-    TextView nav_name;
 
 //    SharedPreferences sharedPref= getSharedPreferences("userNo", Context.MODE_PRIVATE);
 //    SharedPreferences.Editor editor = sharedPref.edit();
@@ -44,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        nav_name= findViewById(R.id.nav_names);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -55,10 +53,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         String intentvalue = getIntent().getStringExtra("fragment_to_load");
+        String previousLocation = getIntent().getStringExtra("previousLocation");
         if(intentvalue != null){
             if(intentvalue.equals("Map"))
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HealthCenterMaps()).commit();
-        }else if(savedInstanceState == null){
+        }else if(previousLocation != null){
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PrescriptionFragment()).commit();
+        }
+        else if(savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         }
 

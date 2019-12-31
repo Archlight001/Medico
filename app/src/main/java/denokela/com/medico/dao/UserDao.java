@@ -19,8 +19,8 @@ public interface UserDao {
     @Update
     void update(UserEntity userEntity);
 
-    @Delete
-    void delete(UserEntity userEntity);
+    @Query("DELETE FROM user_table WHERE Userid=:value")
+    void delete(Integer value);
 
     @Query("DELETE FROM user_table")
     void deleteAllUser();

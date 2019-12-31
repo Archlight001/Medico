@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import denokela.com.medico.R;
-import denokela.com.medico.activities.UserList;
+import denokela.com.medico.activities.Diagnosis_questions;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     Button btnDiagnosis;
@@ -32,7 +32,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        startActivity(new Intent(getContext(), UserList.class));
-
+        startActivity(new Intent(getContext(), Diagnosis_questions.class));
     }
 }

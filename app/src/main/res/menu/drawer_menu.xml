@@ -13,6 +13,9 @@
         <item
             android:id="@+id/nav_health_center_finder"
             android:title="Health Location finder"></item>
+        <item
+            android:id="@+id/nav_feedback"
+            android:title="Feedback Report"></item>
         <item android:id="@+id/exit"
             android:title="Exit"></item>
     </group>

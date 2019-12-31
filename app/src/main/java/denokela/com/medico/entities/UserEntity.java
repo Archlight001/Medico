@@ -8,10 +8,9 @@ import androidx.room.PrimaryKey;
 public class UserEntity {
     //Entity Class for the UserEntity Database
 
-    public UserEntity(String firstName, String lastName, Integer age){
+    public UserEntity(String firstName, String lastName){
         this.firstName = firstName;
         this.lastName = lastName;
-        this.age = age;
     }
 
 
@@ -24,8 +23,6 @@ public class UserEntity {
     @ColumnInfo(name = "LastName")
     String lastName;
 
-    @ColumnInfo(name = "Age")
-    Integer age;
 
     public int getUserid() {
         return Userid;
@@ -51,11 +48,4 @@ public class UserEntity {
         this.lastName = lastName;
     }
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 }

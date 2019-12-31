@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -52,6 +53,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     List<String> users = new ArrayList<>();
     List<Integer> userid = new ArrayList<>();
     List<Integer> prescriptionids = new ArrayList<>();
+    List<Integer> allprescriptionids = new ArrayList<>();
+    ArrayAdapter<String> arrayAdapter;
 
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
@@ -67,6 +70,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     Integer alertCodes = 0;
     int user = 0;
 
+    PrescriptionAdapter prescriptionAdapter;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,6 +82,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         sharedPref = getActivity().getSharedPreferences("user", getActivity().MODE_PRIVATE);
         editor = sharedPref.edit();
         if (sharedPref.getInt("RequestCodeTotal", 0) == 0) {
@@ -84,8 +90,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             editor.apply();
         }
         alertCodes = sharedPref.getInt("RequestCodeTotal", 0);
-        Toast.makeText(getContext(), String.valueOf(alertCodes), Toast.LENGTH_SHORT).show();
-
 
         tvInstruction = view.findViewById(R.id.tv_instruction);
         tvPrescriptionTitle = view.findViewById(R.id.tv_prescriptiontitle);
@@ -101,12 +105,13 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         name = sharedPref.getString("CurrentName", "No Prescription");
         tvPrescriptionTitle.setText(name);
 
-        final PrescriptionAdapter prescriptionAdapter = new PrescriptionAdapter();
+        prescriptionAdapter = new PrescriptionAdapter();
         recyclerView.setAdapter(prescriptionAdapter);
         userViewModel = ViewModelProviders.of(getActivity()).get(UserViewModel.class);
         userViewModel.getAllUsers().observe(this, new Observer<List<UserEntity>>() {
             @Override
             public void onChanged(List<UserEntity> userEntities) {
+                users.clear();
                 for (int i = 0; i < userEntities.size(); i++) {
                     users.add(userEntities.get(i).getFirstName() + " " + userEntities.get(i).getLastName());
                     userid.add(userEntities.get(i).getUserid());
@@ -134,6 +139,15 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             }
         });
 
+        prescriptionViewModel.getAllPrescriptions().observe(this, new Observer<List<PrescriptionEntity>>() {
+            @Override
+            public void onChanged(List<PrescriptionEntity> prescriptionEntities) {
+                for (int i = 0; i < prescriptionEntities.size(); i++) {
+                    allprescriptionids.add(prescriptionEntities.get(i).getPrescription_Id());
+                }
+            }
+        });
+
         //Implement Swipe to delete prescription funtion
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -154,11 +168,13 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             }
         }).attachToRecyclerView(recyclerView);
 
+
     }
 
 
     @Override
     public void onClick(View view) {
+        Toast.makeText(getContext(), String.valueOf(users.size()), Toast.LENGTH_SHORT).show();
         if (users.size() == 1) {
             Intent gotoUserList = new Intent(getContext(), UserReg.class);
             gotoUserList.putExtra("PrescriptionFragment", "pFragment");
@@ -177,14 +193,15 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         return;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.change_user) {
+            arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.select_dialog_singlechoice);
+            arrayAdapter.clear();
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Select a User");
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.select_dialog_singlechoice);
+
             for (int i = 0; i < users.size(); i++) {
                 arrayAdapter.add(users.get(i));
             }
@@ -238,7 +255,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        prescriptionViewModel.deleteAllPrescriptions(user);
+                        prescriptionViewModel.deleteAllPrescriptions(sharedPref.getInt("CurrentID", user));
 
                         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
                         Intent intent = new Intent(getActivity(), AlertReceiver.class);
@@ -247,7 +264,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                             alarmManager.cancel(pendingIntent);
                         }
                         dialogInterface.dismiss();
-                        getActivity().recreate();
+                        List<PrescriptionEntity> emptyprescriptions = new ArrayList<>();
+                        prescriptionAdapter.setPrescriptions(emptyprescriptions);
                         Toast.makeText(getContext(), "All Prescriptions for this user has been deleted", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -264,6 +282,107 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
                 Toast.makeText(getContext(), "No User found, Kindly Register a new user", Toast.LENGTH_SHORT).show();
             }
 
+
+            return true;
+        } else if (item.getItemId() == R.id.delete_all_users) {
+            if (!name.equals("No Prescription")) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("You're about to delete all Registered Users and their Prescriptions");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+                        Intent intent = new Intent(getActivity(), AlertReceiver.class);
+                        for (int x = 0; x < prescriptionids.size(); x++) {
+                            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), allprescriptionids.get(x), intent, 0);
+                            alarmManager.cancel(pendingIntent);
+                        }
+                        userViewModel.deleteAllUsers();
+                        prescriptionViewModel.deleteEveryPrescription();
+
+                        dialogInterface.dismiss();
+                        name = "No Prescription";
+                        tvPrescriptionTitle.setText(name);
+                        editor.putString("CurrentName", name);
+                        editor.putInt("CurrentID", userid.get(userid.size() - 1) + 1);
+                        editor.apply();
+                        users.clear();
+                        userid.clear();
+                        List<PrescriptionEntity> emptyprescriptions = new ArrayList<>();
+                        prescriptionAdapter.setPrescriptions(emptyprescriptions);
+                        Toast.makeText(getContext(), "Operation Successful", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.show();
+            } else {
+                Toast.makeText(getContext(), "No User found, Kindly Register a new user", Toast.LENGTH_SHORT).show();
+            }
+
+            return true;
+        } else if (item.getItemId() == R.id.delete_current_user) {
+            if (!name.equals("No Prescription")) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("You're about to delete the Current User and their Prescriptions");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+                        Intent intent = new Intent(getActivity(), AlertReceiver.class);
+                        for (int x = 0; x < prescriptionids.size(); x++) {
+                            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), prescriptionids.get(x), intent, 0);
+                            alarmManager.cancel(pendingIntent);
+                        }
+                        prescriptionViewModel.deleteAllPrescriptions(sharedPref.getInt("CurrentID", user));
+                        userViewModel.delete(sharedPref.getInt("CurrentID", user));
+                        if (users.size() > 2) {
+                            for (int y = 0; y < userid.size(); y++) {
+                                if (userid.get(y).equals(sharedPref.getInt("CurrentID", user))) {
+                                    userid.remove(userid.get(y));
+                                    users.remove(users.get(y));
+                                }
+                            }
+
+                            name = users.get(0);
+                            tvPrescriptionTitle.setText(name);
+                            editor.putInt("CurrentID", userid.get(0));
+                            editor.putString("CurrentName", name);
+                            editor.apply();
+                            getActivity().recreate();
+
+                        } else if (users.size() == 2) {
+                            name = "No Prescription";
+                            tvPrescriptionTitle.setText(name);
+                            editor.putString("CurrentName", name);
+                            editor.putInt("CurrentID", userid.get(userid.size() - 1) + 1);
+                            editor.apply();
+                            List<PrescriptionEntity> emptyprescriptions = new ArrayList<>();
+                            prescriptionAdapter.setPrescriptions(emptyprescriptions);
+                            getActivity().recreate();
+                            users.clear();
+                            userid.clear();
+                            getActivity().recreate();
+                        }
+                        dialogInterface.dismiss();
+
+                        Toast.makeText(getContext(), "Operation Successful", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.show();
+            } else {
+                Toast.makeText(getContext(), "No User found, Kindly Register a new user", Toast.LENGTH_SHORT).show();
+            }
 
             return true;
         }
@@ -292,7 +411,6 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
             Intent intent = new Intent(getContext(), AlertReceiver.class);
 
-            Toast.makeText(getContext(), key, Toast.LENGTH_SHORT).show();
             String message = "Time to take " + drugname;
             intent.putExtra("key", key);
             intent.putExtra("message", message);
@@ -313,12 +431,11 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
         } else if (requestCode == ADD_USER_REQUEST && resultCode == getActivity().RESULT_OK) {
             String fname = data.getStringExtra(UserReg.EXTRA_FNAME);
             String lname = data.getStringExtra(UserReg.EXTRA_LNAME);
-            int age = data.getIntExtra(UserReg.EXTRA_AGE, 0);
             users.clear();
             userid.clear();
 //            getActivity().finish();
 //            startActivity(getActivity().getIntent());
-            UserEntity user = new UserEntity(fname, lname, age);
+            UserEntity user = new UserEntity(fname, lname);
             userViewModel.insert(user);
             if (name.equals("No Prescription")) {
                 editor.putString("CurrentName", fname + " " + lname);

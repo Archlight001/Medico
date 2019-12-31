@@ -42,6 +42,10 @@ public class PrescriptionRepository {
         new AsyncTasker(prescriptionDao,"updateCount",patientId,count).execute();
     }
 
+    public void deleteEveryPrescription(){
+        new AsyncTasker(prescriptionDao,"deleteEvery",0,0).execute();
+    }
+
     public LiveData<List<PrescriptionEntity>> getAllPrescriptions(){
 
         return allPrescriptions;
@@ -80,7 +84,10 @@ public class PrescriptionRepository {
                 prescriptionDao.delete(prescriptionEntities[0]);
             }else if(action.equals("deleteAll")){
                 prescriptionDao.deleteAllPrescriptions(id);
-            }else if(action.equals("updateCount")){
+            }else if(action.equals("deleteEvery")){
+                prescriptionDao.deleteEveryPrescription();
+            }
+            else if(action.equals("updateCount")){
                 prescriptionDao.updateCount(count,id);
             }
             return null;
