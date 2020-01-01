@@ -89,6 +89,15 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             editor.putInt("RequestCodeTotal", 1);
             editor.apply();
         }
+
+        if(sharedPref.getInt("Prescription",0)==0){
+            AlertDialog.Builder firstbuild = new AlertDialog.Builder(getContext());
+            firstbuild.setMessage("Note that the set timers for all prescriptions have been set to 1 minute for" +
+                    " the purpose of this trial only.");
+            firstbuild.show();
+            editor.putInt("Prescription",1);
+            editor.apply();
+        }
         alertCodes = sharedPref.getInt("RequestCodeTotal", 0);
 
         tvInstruction = view.findViewById(R.id.tv_instruction);
@@ -174,8 +183,7 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        Toast.makeText(getContext(), String.valueOf(users.size()), Toast.LENGTH_SHORT).show();
-        if (users.size() == 1) {
+         if (users.size() == 1) {
             Intent gotoUserList = new Intent(getContext(), UserReg.class);
             gotoUserList.putExtra("PrescriptionFragment", "pFragment");
             startActivityForResult(gotoUserList, ADD_USER_REQUEST);
@@ -424,7 +432,8 @@ public class PrescriptionFragment extends Fragment implements View.OnClickListen
             if (c.before(Calendar.getInstance())) {
                 c.add(Calendar.DATE, 1);
             }
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 60 * 1000, pendingIntent);
+            int interval = 60*1000;
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), interval, pendingIntent);
             editor.putInt("RequestCodeTotal", alertCodes + 1).apply();
             getActivity().recreate();
 

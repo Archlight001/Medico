@@ -1,5 +1,6 @@
 package denokela.com.medico.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,11 +27,24 @@ public class DoctorsList extends AppCompatActivity {
 
     DoctorsViewModel doctorsViewModel;
 
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doctors_list);
 
+        sharedPreferences = getSharedPreferences("user",MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        if(sharedPreferences.getInt("DoctorsList",0)==0){
+            AlertDialog.Builder firstbuild = new AlertDialog.Builder(this);
+            firstbuild.setMessage("Note that all information provided are for trial purposes and are not real");
+            firstbuild.show();
+            editor.putInt("DoctorsList",1);
+            editor.apply();
+        }
         TextView tvTitle = findViewById(R.id.tv_showingDoctors);
         String diseaseName = getIntent().getStringExtra("DiseaseName");
         tvTitle.setText("Showing Doctors that Specializes in "+ diseaseName);

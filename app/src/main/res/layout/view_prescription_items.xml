@@ -36,6 +36,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_drugname"
             android:text="Drug Instruction" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Swipe to delete"
+            android:layout_below="@+id/tv_druginstruction"
+            android:layout_alignParentRight="true"
+            android:textStyle="italic"
+            android:textColor="@color/colorPrimaryDark"
+            />
 
         <TextView
             android:id="@+id/tv_drugamount"

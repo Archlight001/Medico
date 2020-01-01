@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_health_center_finder:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HealthCenterMaps()).commit();
                 break;
+            case R.id.nav_feedback:
+                 startActivity(new Intent(this,Webview.class));
+                 break;
             case R.id.exit:
                 finish();
                 break;

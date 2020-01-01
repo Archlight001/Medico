@@ -67,6 +67,7 @@ public class NotificationHelper extends ContextWrapper {
                 .setContentText(messageBody)
                 .setSmallIcon(R.drawable.ic_casino)
                 .setAutoCancel(true)
+                .setOngoing(true)
                 .setContentIntent(pendingIntent);
     }
 }

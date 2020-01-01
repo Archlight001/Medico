@@ -2,53 +2,52 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
     android:layout_centerVertical="true"
     android:background="@drawable/homebg"
-    >
+    android:padding="20dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        >
-    <TextView
-        android:id="@+id/headtitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="MOBILE BASED MEDICAL DIAGNOSIS APP"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="#ffffff"
-        android:textStyle="bold" />
+        android:layout_centerVertical="true">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/scope"
-        android:layout_below="@+id/headtitle"
-        android:layout_marginTop="5dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:text="Kindly Note that the diagnosis functions are limited to
+        <TextView
+            android:id="@+id/headtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="MOBILE BASED MEDICAL DIAGNOSIS APP"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/scope"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/headtitle"
+            android:layout_marginTop="5dp"
+            android:text="Kindly Note that the diagnosis functions are limited to
  the diseases Gastroenteritis,Cholera,Typhoid Fever, Meningitis and Renal Failure"
-        android:textAlignment="textStart"
-        android:textStyle="bold|italic"
-        android:textColor="#ffffff"
+            android:textAlignment="textStart"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#ffffff"
+            android:textStyle="bold|italic"
 
-        />
+            />
 
-    <Button
-        android:id="@+id/btnDiagnose"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/scope"
-        android:layout_marginTop="4dp"
-        android:background="#07238a"
-        android:textColor="#ffffff"
-        android:layout_centerVertical="true"
-        android:text="BEGIN DIAGNOSIS"
-        android:textAlignment="center" />
+        <Button
+            android:id="@+id/btnDiagnose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/scope"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="4dp"
+            android:background="#07238a"
+            android:text="BEGIN DIAGNOSIS"
+            android:textAlignment="center"
+            android:textColor="#ffffff" />
     </RelativeLayout>
 
 </RelativeLayout>

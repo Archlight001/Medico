@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -123,10 +125,10 @@ public class Diagnosis_questions extends AppCompatActivity{
                 renalfailureSymptoms = new ArrayList<>(diseaseSymptomsEntities);
             }
         });
-
 }
 
     public void showItems(View view) {
+
         specificquestions = new ArrayList<>();
         diseaseParameter = new ArrayList<>();
 
@@ -145,6 +147,7 @@ public class Diagnosis_questions extends AppCompatActivity{
         builder = new AlertDialog.Builder(this);
 
         if(selectedItems.size() >1){
+
             totalGastroCount = gastroSymptoms.size()+2;
             totalCholeraCount = choleraSymptoms.size()+2;
             totalTyphoidCount = typhoidSymptoms.size()+2;
@@ -303,8 +306,6 @@ public class Diagnosis_questions extends AppCompatActivity{
                 }
             });
 
-
-            builder.setCancelable(false);
             builder.show();
             i++;
 
@@ -328,6 +329,7 @@ public class Diagnosis_questions extends AppCompatActivity{
     }
 
     public void transferTotalResult(){
+        Toast.makeText(this, "Processing Result", Toast.LENGTH_SHORT).show();
             //Casting the Values as double to perform arithmetic operation and returning them back to int
             GastroCount= (int) (((double)GastroCount / (double) totalGastroCount) * 100);
             CholeraCount= (int) (((double)CholeraCount / (double) totalCholeraCount) * 100);
